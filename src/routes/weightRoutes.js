@@ -1,54 +1,26 @@
 const express = require('express');
 const router = express.Router();
-const fs = require('fs').promises;
-const path = require('path');
-const { requireAuth, getUserDataPath, ensureUserDataDirectory } = require('../middleware/auth');
-
-// Helper function to get user weight file path
-function getUserWeightPath(userId) {
-    return path.join(getUserDataPath(userId), 'weight.json');
-}
-
-// Initialize user weight file if it doesn't exist
-async function initializeUserWeightFile(userWeightFile) {
-    try {
-        await fs.access(userWeightFile);
-    } catch {
-        const defaultWeightData = {
-            entries: []
-        };
-        await fs.writeFile(userWeightFile, JSON.stringify(defaultWeightData, null, 2));
-    }
-}
+const { requireAuth } = require('../middleware/auth');
+const weightService = require('../database/weightService');
 
 // GET - Get all weight entries for a user
 router.get('/', requireAuth, async (req, res) => {
+    console.log('Handling GET request for /api/weight');
     try {
         const userId = req.user.id;
-        await ensureUserDataDirectory(userId);
-        
-        const userWeightFile = getUserWeightPath(userId);
-        await initializeUserWeightFile(userWeightFile);
-        
-        const data = await fs.readFile(userWeightFile, 'utf8');
-        const weightData = JSON.parse(data);
-        
-        // Sort entries by date (newest first)
-        weightData.entries.sort((a, b) => new Date(b.date) - new Date(a.date));
-        
+        const weightData = await weightService.getUserWeightEntries(userId);
         res.json(weightData);
     } catch (error) {
-        console.error('Error reading weight entries:', error);
+        console.error('Error in GET /api/weight:', error);
         res.status(500).json({ error: 'Failed to read weight entries' });
     }
 });
 
 // POST - Add a new weight entry
 router.post('/', requireAuth, async (req, res) => {
+    console.log('Handling POST request for /api/weight');
     try {
         const userId = req.user.id;
-        await ensureUserDataDirectory(userId);
-        
         const { date, weight, note } = req.body;
         
         // Validate required fields
@@ -68,47 +40,31 @@ router.post('/', requireAuth, async (req, res) => {
             return res.status(400).json({ error: 'Invalid date format' });
         }
         
-        const userWeightFile = getUserWeightPath(userId);
-        await initializeUserWeightFile(userWeightFile);
-        
-        const data = await fs.readFile(userWeightFile, 'utf8');
-        const weightData = JSON.parse(data);
-        
-        // Check if entry already exists for this date
-        const existingEntryIndex = weightData.entries.findIndex(entry => entry.date === date);
-        
-        const newEntry = {
-            id: Date.now().toString(),
+        const entryData = {
             date: date,
             weight: weightNum,
-            note: note || '',
-            createdAt: new Date().toISOString()
+            note: note || ''
         };
         
-        if (existingEntryIndex !== -1) {
-            // Update existing entry
-            weightData.entries[existingEntryIndex] = { ...weightData.entries[existingEntryIndex], ...newEntry };
+        const newEntry = await weightService.addWeightEntry(userId, entryData);
+        if (newEntry) {
+            res.json({ message: 'Weight entry saved successfully', entry: newEntry });
         } else {
-            // Add new entry
-            weightData.entries.push(newEntry);
+            res.status(500).json({ error: 'Failed to save weight entry to database' });
         }
-        
-        await fs.writeFile(userWeightFile, JSON.stringify(weightData, null, 2));
-        res.json({ message: 'Weight entry saved successfully', entry: newEntry });
     } catch (error) {
-        console.error('Error saving weight entry:', error);
+        console.error('Error in POST /api/weight:', error);
         res.status(500).json({ error: 'Failed to save weight entry' });
     }
 });
 
 // PUT - Update an existing weight entry
 router.put('/:id', requireAuth, async (req, res) => {
+    console.log('Handling PUT request for /api/weight/:id');
     try {
         const userId = req.user.id;
         const entryId = req.params.id;
         const { date, weight, note } = req.body;
-        
-        await ensureUserDataDirectory(userId);
         
         // Validate required fields
         if (!date || !weight) {
@@ -121,62 +77,39 @@ router.put('/:id', requireAuth, async (req, res) => {
             return res.status(400).json({ error: 'Weight must be a positive number' });
         }
         
-        const userWeightFile = getUserWeightPath(userId);
-        await initializeUserWeightFile(userWeightFile);
-        
-        const data = await fs.readFile(userWeightFile, 'utf8');
-        const weightData = JSON.parse(data);
-        
-        // Find the entry to update
-        const entryIndex = weightData.entries.findIndex(entry => entry.id === entryId);
-        if (entryIndex === -1) {
-            return res.status(404).json({ error: 'Weight entry not found' });
-        }
-        
-        // Update the entry
-        weightData.entries[entryIndex] = {
-            ...weightData.entries[entryIndex],
+        const entryData = {
             date: date,
             weight: weightNum,
-            note: note || '',
-            updatedAt: new Date().toISOString()
+            note: note || ''
         };
         
-        await fs.writeFile(userWeightFile, JSON.stringify(weightData, null, 2));
-        res.json({ message: 'Weight entry updated successfully', entry: weightData.entries[entryIndex] });
+        const updatedEntry = await weightService.updateWeightEntry(userId, entryId, entryData);
+        if (updatedEntry) {
+            res.json({ message: 'Weight entry updated successfully', entry: updatedEntry });
+        } else {
+            res.status(404).json({ error: 'Weight entry not found or failed to update' });
+        }
     } catch (error) {
-        console.error('Error updating weight entry:', error);
+        console.error('Error in PUT /api/weight/:id:', error);
         res.status(500).json({ error: 'Failed to update weight entry' });
     }
 });
 
 // DELETE - Delete a weight entry
 router.delete('/:id', requireAuth, async (req, res) => {
+    console.log('Handling DELETE request for /api/weight/:id');
     try {
         const userId = req.user.id;
         const entryId = req.params.id;
         
-        await ensureUserDataDirectory(userId);
-        
-        const userWeightFile = getUserWeightPath(userId);
-        await initializeUserWeightFile(userWeightFile);
-        
-        const data = await fs.readFile(userWeightFile, 'utf8');
-        const weightData = JSON.parse(data);
-        
-        // Find the entry to delete
-        const entryIndex = weightData.entries.findIndex(entry => entry.id === entryId);
-        if (entryIndex === -1) {
-            return res.status(404).json({ error: 'Weight entry not found' });
+        const success = await weightService.deleteWeightEntry(userId, entryId);
+        if (success) {
+            res.json({ message: 'Weight entry deleted successfully' });
+        } else {
+            res.status(404).json({ error: 'Weight entry not found or failed to delete' });
         }
-        
-        // Remove the entry
-        weightData.entries.splice(entryIndex, 1);
-        
-        await fs.writeFile(userWeightFile, JSON.stringify(weightData, null, 2));
-        res.json({ message: 'Weight entry deleted successfully' });
     } catch (error) {
-        console.error('Error deleting weight entry:', error);
+        console.error('Error in DELETE /api/weight/:id:', error);
         res.status(500).json({ error: 'Failed to delete weight entry' });
     }
 });

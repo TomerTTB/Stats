@@ -3,6 +3,9 @@ const path = require('path');
 const fs = require('fs').promises;
 const session = require('express-session');
 
+// Database initialization (non-blocking)
+const { initializeDatabase, testConnection } = require('./src/database/init');
+
 // Initialize express app
 const app = express();
 const port = process.env.PORT || 3000;
@@ -36,26 +39,12 @@ const settingsRoutes = require('./src/routes/settingsRoutes');
 const authRoutes = require('./src/routes/authRoutes');
 const weightRoutes = require('./src/routes/weightRoutes');
 
-// Import migration utility
-const { runMigration, needsMigration } = require('./src/utils/migration');
-
-// Ensure data directories exist and run migration if needed
-async function ensureDirectoriesAndMigrate() {
+// Ensure data directory exists for SQLite database
+async function ensureDataDirectory() {
     try {
         await fs.mkdir(path.join(__dirname, 'src', 'data'), { recursive: true });
-        await fs.mkdir(path.join(__dirname, 'src', 'data', 'meals'), { recursive: true });
-        await fs.mkdir(path.join(__dirname, 'src', 'data', 'foods'), { recursive: true });
-        await fs.mkdir(path.join(__dirname, 'src', 'data', 'users'), { recursive: true });
-
-        // Check if migration is needed
-        if (await needsMigration()) {
-            console.log('\n🔄 Migration needed. Converting to multi-user structure...');
-            await runMigration();
-            console.log('✅ Migration completed. Server ready!\n');
-        }
     } catch (error) {
-        console.error('Error in setup:', error);
-        throw error;
+        console.error('Error creating data directory:', error);
     }
 }
 
@@ -96,8 +85,11 @@ app.use((req, res) => {
 // Initialize server
 async function startServer() {
     try {
-        // Ensure all required directories exist and run migration if needed
-        await ensureDirectoriesAndMigrate();
+        // Ensure data directory exists for SQLite database
+        await ensureDataDirectory();
+
+        // Initialize database (non-blocking - server starts even if DB fails)
+        initializeDatabaseAsync();
 
         // Start the server
         app.listen(port, () => {
@@ -117,6 +109,23 @@ async function startServer() {
     } catch (error) {
         console.error('Failed to start server:', error);
         process.exit(1);
+    }
+}
+
+// Simple database initialization
+async function initializeDatabaseAsync() {
+    try {
+        console.log('Connecting to database...');
+        
+        const connected = await testConnection();
+        if (connected) {
+            await initializeDatabase();
+            console.log('Database ready');
+        } else {
+            console.log('Database not available');
+        }
+    } catch (error) {
+        console.log('Database error:', error.message);
     }
 }
 

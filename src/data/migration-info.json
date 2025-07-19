@@ -1,9 +1,0 @@
-{
-  "migratedAt": "2025-07-17T19:58:37.257Z",
-  "defaultUserId": "user_default_1752782317236",
-  "defaultUserCredentials": {
-    "email": "admin@nutrition.local",
-    "password": "admin123",
-    "note": "These are the credentials for accessing your existing data"
-  }
-}

@@ -249,27 +249,101 @@ function setupRowEventListeners(input) {
         foodSearch.setupSearchInput(input);
     }
 
-    // Add input event listener to clear values when item name is deleted
+    // Add debounced save to prevent premature saves during typing
+    let saveTimeout;
+    let isTyping = false;
+    let lastInputTime = 0;
+
+    // Add input event listener with improved logic
     input.addEventListener('input', async function () {
+        isTyping = true;
+        lastInputTime = Date.now();
+        
+        // Clear existing timeout
+        if (saveTimeout) {
+            clearTimeout(saveTimeout);
+        }
+
         if (!this.value.trim()) {
+            // If input is empty, clear and save immediately
             const row = this.closest('tr');
             clearRowValues(row);
             await saveMealData(row);
             checkRowsAndUpdate(row.parentElement);
+            isTyping = false;
+        } else {
+            // If user is typing, wait before saving
+            saveTimeout = setTimeout(async () => {
+                isTyping = false;
+                const row = this.closest('tr');
+                
+                // Only auto-save if user has stopped typing for at least 2 seconds
+                // and the food data seems complete (has nutritional values)
+                const nutritionalDivs = row.querySelectorAll('.nutritional-value');
+                const hasNutritionalData = Array.from(nutritionalDivs).some(div => 
+                    div.textContent && parseFloat(div.textContent) > 0
+                );
+                
+                // Only save if we have nutritional data or if it's been a while since typing
+                if (hasNutritionalData || (Date.now() - lastInputTime > 3000)) {
+                    await saveMealData(row);
+                }
+            }, 2000); // Wait 2 seconds after typing stops
         }
     });
 
-    // Add blur event
+    // Improved blur event with validation
     input.addEventListener('blur', async function () {
-        if (!this.value.trim()) {
-            const row = this.closest('tr');
-            clearRowValues(row);
-            await saveMealData(row);
-        } else {
-            const row = this.closest('tr');
-            await saveMealData(row);
+        // Clear any pending save timeout
+        if (saveTimeout) {
+            clearTimeout(saveTimeout);
         }
-        checkRowsAndUpdate(this.closest('tbody'));
+
+        // Small delay to allow for food selection to complete
+        setTimeout(async () => {
+            const row = this.closest('tr');
+            
+            if (!this.value.trim()) {
+                // Empty input - clear and save
+                clearRowValues(row);
+                await saveMealData(row);
+            } else {
+                // Check if we have complete food data
+                const nutritionalDivs = row.querySelectorAll('.nutritional-value');
+                const hasNutritionalData = Array.from(nutritionalDivs).some(div => 
+                    div.textContent && parseFloat(div.textContent) > 0
+                );
+                
+                // Only save if we have nutritional data, indicating a proper food selection
+                if (hasNutritionalData) {
+                    await saveMealData(row);
+                } else {
+                    // If no nutritional data but user typed something, 
+                    // try to find and suggest matching foods
+                    console.log(`⚠️ Food name "${this.value}" entered but no nutritional data found. User may need to select from autocomplete.`);
+                    
+                    // Don't save incomplete data - let user select from autocomplete
+                    // Focus back on input to show autocomplete suggestions
+                    if (this.value.length > 2) {
+                        this.focus();
+                        // Trigger search to show suggestions
+                        const event = new Event('input');
+                        this.dispatchEvent(event);
+                    }
+                }
+            }
+            
+            checkRowsAndUpdate(this.closest('tbody'));
+            isTyping = false;
+        }, 300); // Small delay to allow autocomplete selection to complete
+    });
+
+    // Add keydown event to handle Enter key
+    input.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            this.blur(); // Trigger save via blur event
+        }
     });
 }
 

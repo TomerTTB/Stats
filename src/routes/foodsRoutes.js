@@ -1,11 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const fs = require('fs').promises;
-const path = require('path');
 const { requireAuth } = require('../middleware/auth');
-
-// Shared foods database - accessible to all authenticated users
-const FOODS_FILE = path.join(__dirname, '..', 'data', 'foods', 'foods.json');
+const foodService = require('../database/foodService');
 
 // Debug logging
 router.use((req, res, next) => {
@@ -13,93 +9,108 @@ router.use((req, res, next) => {
     next();
 });
 
-// Helper function to read foods file
-async function readFoodsFile() {
-    try {
-        // Check if file exists
-        try {
-            await fs.access(FOODS_FILE);
-        } catch (error) {
-            console.error('Foods file does not exist:', FOODS_FILE);
-            // Create an empty foods file if it doesn't exist
-            await fs.writeFile(FOODS_FILE, JSON.stringify({ foods: [] }, null, 2), 'utf8');
-        }
-        
-        const data = await fs.readFile(FOODS_FILE, 'utf8');
-        return JSON.parse(data);
-    } catch (error) {
-        console.error('Error reading foods file:', error);
-        console.error('Attempted to read from:', FOODS_FILE);
-        throw error;
-    }
-}
-
-// Helper function to write foods file
-async function writeFoodsFile(data) {
-    try {
-        await fs.writeFile(FOODS_FILE, JSON.stringify(data, null, 2), 'utf8');
-    } catch (error) {
-        console.error('Error writing foods file:', error);
-        throw error;
-    }
-}
-
 // Get all foods - requires authentication, shared database
 router.get('/', requireAuth, async (req, res) => {
     console.log('Handling GET request for /api/foods');
     try {
-        const data = await readFoodsFile();
-        res.json(data);
+        const { search } = req.query;
+        
+        let foods;
+        if (search) {
+            // Use search functionality
+            foods = await foodService.searchFoods(search);
+        } else {
+            // Get all foods
+            foods = await foodService.getAllFoods();
+        }
+        
+        // Maintain the same response format as before
+        res.json({ foods: foods });
     } catch (error) {
         console.error('Error in GET /api/foods:', error);
         res.status(500).json({ error: 'Failed to load foods database' });
     }
 });
 
+// Search foods endpoint (alternative to query parameter)
+router.get('/search', requireAuth, async (req, res) => {
+    console.log('Handling GET request for /api/foods/search');
+    try {
+        const { q } = req.query;
+        const foods = await foodService.searchFoods(q || '');
+        
+        res.json({ foods: foods });
+    } catch (error) {
+        console.error('Error in GET /api/foods/search:', error);
+        res.status(500).json({ error: 'Failed to search foods database' });
+    }
+});
+
 // Add new food - requires authentication, shared database
 router.post('/', requireAuth, async (req, res) => {
+    console.log('Handling POST request for /api/foods');
     try {
-        const data = await readFoodsFile();
-        data.foods.push(req.body);
-        await writeFoodsFile(data);
-        res.status(201).json(req.body);
+        const success = await foodService.addFood(req.body);
+        if (success) {
+            res.status(201).json(req.body);
+        } else {
+            res.status(500).json({ error: 'Failed to add food to database' });
+        }
     } catch (error) {
+        console.error('Error in POST /api/foods:', error);
         res.status(500).json({ error: 'Failed to add new food' });
     }
 });
 
 // Update food - requires authentication, shared database
 router.put('/:index', requireAuth, async (req, res) => {
+    console.log('Handling PUT request for /api/foods/:index');
     try {
         const index = parseInt(req.params.index);
-        const data = await readFoodsFile();
         
-        if (index < 0 || index >= data.foods.length) {
+        // For SQLite mode, we need to get the food ID first
+        // Since frontend sends index, we need to map it to database ID
+        const allFoods = await foodService.getAllFoods();
+        if (index < 0 || index >= allFoods.length) {
             return res.status(404).json({ error: 'Food not found' });
         }
 
-        data.foods[index] = req.body;
-        await writeFoodsFile(data);
-        res.json(req.body);
+        // For now, we'll use the index approach for compatibility
+        // In SQLite mode, this will work through the updateFood method
+        const success = await foodService.updateFood(index, req.body);
+        if (success) {
+            res.json(req.body);
+        } else {
+            res.status(500).json({ error: 'Failed to update food in database' });
+        }
     } catch (error) {
+        console.error('Error in PUT /api/foods/:index:', error);
         res.status(500).json({ error: 'Failed to update food' });
     }
 });
 
 // Delete food - requires authentication, shared database
 router.delete('/:index', requireAuth, async (req, res) => {
+    console.log('Handling DELETE request for /api/foods/:index');
     try {
         const index = parseInt(req.params.index);
-        const data = await readFoodsFile();
         
-        if (index < 0 || index >= data.foods.length) {
+        // Get all foods to validate index and find the item to delete
+        const allFoods = await foodService.getAllFoods();
+        if (index < 0 || index >= allFoods.length) {
             return res.status(404).json({ error: 'Food not found' });
         }
 
-        data.foods.splice(index, 1);
-        await writeFoodsFile(data);
-        res.status(204).send();
+        // For now, we'll use the index approach for compatibility
+        // In SQLite mode, this will work through the deleteFood method
+        const success = await foodService.deleteFood(index);
+        if (success) {
+            res.status(204).send();
+        } else {
+            res.status(500).json({ error: 'Failed to delete food from database' });
+        }
     } catch (error) {
+        console.error('Error in DELETE /api/foods/:index:', error);
         res.status(500).json({ error: 'Failed to delete food' });
     }
 });

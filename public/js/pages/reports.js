@@ -308,25 +308,41 @@ class WeightTracker {
 
     updateWeightStatistics() {
         const currentWeight = this.weightData.length > 0 ? this.weightData[0].weight : 0;
+        const latestWeightChange = this.calculateLatestWeightChange();
         const weightChange = this.calculateWeightChange();
-        const bmi = this.calculateBMI(currentWeight);
+        const avgWeightChange = this.calculateAvgWeightChange();
         const trend = this.calculateTrend();
 
         document.getElementById('currentWeight').textContent = currentWeight ? `${currentWeight.toFixed(1)} kg` : 'No data';
+        document.getElementById('latestWeightChange').textContent = latestWeightChange !== null ? `${latestWeightChange > 0 ? '+' : ''}${latestWeightChange.toFixed(1)} kg` : 'No data';
         document.getElementById('weightChange').textContent = weightChange ? `${weightChange > 0 ? '+' : ''}${weightChange.toFixed(1)} kg` : 'No change';
-        document.getElementById('currentBMI').textContent = bmi ? bmi.toFixed(1) : 'No data';
+        document.getElementById('avgWeightChange').textContent = avgWeightChange ? `${avgWeightChange > 0 ? '+' : ''}${avgWeightChange.toFixed(2)} kg` : 'No data';
         document.getElementById('weightTrend').textContent = trend;
+    }
+
+    calculateLatestWeightChange() {
+        if (this.weightData.length < 2) return null;
+        return this.weightData[0].weight - this.weightData[1].weight;
     }
 
     calculateWeightChange() {
         if (this.weightData.length < 2) return 0;
-        return this.weightData[0].weight - this.weightData[1].weight;
+        return this.weightData[0].weight - this.weightData[this.weightData.length - 1].weight;
     }
 
-    calculateBMI(weight) {
-        if (!weight || !this.settings?.height) return 0;
-        const heightInMeters = this.settings.height / 100;
-        return weight / (heightInMeters * heightInMeters);
+    calculateAvgWeightChange() {
+        if (this.weightData.length < 2) return 0;
+        
+        let totalChange = 0;
+        let changeCount = 0;
+        
+        for (let i = 0; i < this.weightData.length - 1; i++) {
+            const change = this.weightData[i].weight - this.weightData[i + 1].weight;
+            totalChange += change;
+            changeCount++;
+        }
+        
+        return changeCount > 0 ? totalChange / changeCount : 0;
     }
 
     calculateTrend() {

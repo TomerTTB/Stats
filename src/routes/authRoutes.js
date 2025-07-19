@@ -3,29 +3,7 @@ const router = express.Router();
 const fs = require('fs').promises;
 const path = require('path');
 const bcrypt = require('bcryptjs');
-
-const USERS_FILE = path.join(__dirname, '..', 'data', 'users.json');
-
-// Helper function to read users
-async function readUsers() {
-    try {
-        const data = await fs.readFile(USERS_FILE, 'utf8');
-        return JSON.parse(data);
-    } catch (error) {
-        console.error('Error reading users file:', error);
-        return { users: [] };
-    }
-}
-
-// Helper function to write users
-async function writeUsers(usersData) {
-    try {
-        await fs.writeFile(USERS_FILE, JSON.stringify(usersData, null, 2));
-    } catch (error) {
-        console.error('Error writing users file:', error);
-        throw error;
-    }
-}
+const userService = require('../database/userService');
 
 // Helper function to generate user ID
 function generateUserId() {
@@ -34,6 +12,7 @@ function generateUserId() {
 
 // Register new user
 router.post('/register', async (req, res) => {
+    console.log('Handling POST request for /api/auth/register');
     try {
         const { email, password, name } = req.body;
 
@@ -42,11 +21,8 @@ router.post('/register', async (req, res) => {
             return res.status(400).json({ error: 'Email, password, and name are required' });
         }
 
-        // Read existing users
-        const usersData = await readUsers();
-
-        // Check if user already exists
-        const existingUser = usersData.users.find(user => user.email === email);
+        // Check if user already exists using SQLite
+        const existingUser = await userService.getUserByEmail(email);
         if (existingUser) {
             return res.status(400).json({ error: 'User already exists with this email' });
         }
@@ -63,9 +39,11 @@ router.post('/register', async (req, res) => {
             createdAt: new Date().toISOString()
         };
 
-        // Add user to database
-        usersData.users.push(newUser);
-        await writeUsers(usersData);
+        // Add user to SQLite database
+        const success = await userService.createUser(newUser);
+        if (!success) {
+            return res.status(500).json({ error: 'Failed to create user in database' });
+        }
 
         // Don't send password back
         const { password: _, ...userResponse } = newUser;
@@ -83,6 +61,7 @@ router.post('/register', async (req, res) => {
 
 // Login user
 router.post('/login', async (req, res) => {
+    console.log('Handling POST request for /api/auth/login');
     try {
         const { email, password } = req.body;
 
@@ -91,11 +70,8 @@ router.post('/login', async (req, res) => {
             return res.status(400).json({ error: 'Email and password are required' });
         }
 
-        // Read users
-        const usersData = await readUsers();
-
-        // Find user
-        const user = usersData.users.find(user => user.email === email);
+        // Find user using SQLite
+        const user = await userService.getUserByEmail(email);
         if (!user) {
             return res.status(401).json({ error: 'Invalid email or password' });
         }
@@ -138,15 +114,14 @@ router.post('/logout', (req, res) => {
 
 // Get current user (check if logged in)
 router.get('/me', async (req, res) => {
+    console.log('Handling GET request for /api/auth/me');
     try {
         if (!req.session.userId) {
             return res.status(401).json({ error: 'Not authenticated' });
         }
 
-        // Read users to get current user data
-        const usersData = await readUsers();
-        const user = usersData.users.find(user => user.id === req.session.userId);
-
+        // Get user using SQLite
+        const user = await userService.getUserById(req.session.userId);
         if (!user) {
             return res.status(401).json({ error: 'User not found' });
         }

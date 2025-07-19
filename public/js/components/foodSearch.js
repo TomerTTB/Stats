@@ -170,6 +170,14 @@ class FoodSearch {
             const event = new Event('change');
             amountInput.dispatchEvent(event);
         }
+
+        // Save the meal data immediately after food selection
+        // This ensures the complete food data is saved to the database
+        if (typeof saveMealData === 'function') {
+            setTimeout(() => {
+                saveMealData(row);
+            }, 100); // Small delay to ensure all DOM updates are complete
+        }
     }
 }
 

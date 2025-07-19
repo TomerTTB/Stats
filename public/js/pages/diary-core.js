@@ -239,10 +239,10 @@ async function saveMealTime(mealId, newTime) {
 
 async function saveMealData(row) {
     try {
-    const mealSection = row.closest('.meal-section');
+        const mealSection = row.closest('.meal-section');
         if (!mealSection) return;
 
-    const mealId = mealSection.dataset.mealId;
+        const mealId = mealSection.dataset.mealId;
         const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
         const dayName = days[currentDate.getDay()];
 
@@ -251,18 +251,31 @@ async function saveMealData(row) {
         const amountInput = row.querySelector('input[type="number"]');
         const nutritionalDivs = row.querySelectorAll('.nutritional-value');
 
-        // Only save if there's a food name
+        // If no food name, delete the item if it exists
         if (!nameInput || !nameInput.value.trim()) {
-            // If this row had an ID, we need to delete it
             const itemId = row.dataset.itemId;
             if (itemId) {
                 await API.meals.deleteItem(dayName, mealId, itemId);
                 delete row.dataset.itemId;
             }
-        return;
-    }
+            return;
+        }
 
-    const itemData = {
+        // Validate that we have either nutritional data OR it's a manual entry
+        const hasNutritionalData = Array.from(nutritionalDivs).some(div => 
+            div.textContent && parseFloat(div.textContent) > 0
+        );
+        
+        const hasAmount = amountInput && parseFloat(amountInput.value) > 0;
+        
+        // Don't save if it looks like incomplete autocomplete selection
+        // (has name but no nutritional data and no manual amount)
+        if (!hasNutritionalData && !hasAmount && nameInput.value.length < 10) {
+            console.log(`⚠️ Skipping save for "${nameInput.value}" - appears to be incomplete entry`);
+            return;
+        }
+
+        const itemData = {
             name: nameInput.value.trim(),
             amount: parseFloat(amountInput?.value) || 0,
             baseAmount: parseFloat(amountInput?.getAttribute('data-base-amount')) || parseFloat(amountInput?.value) || 0,
@@ -277,6 +290,14 @@ async function saveMealData(row) {
             baseFat: parseFloat(nutritionalDivs[3]?.getAttribute('data-base-value')) || parseFloat(nutritionalDivs[3]?.textContent) || 0,
             baseProteinG: parseFloat(nutritionalDivs[4]?.getAttribute('data-base-value')) || parseFloat(nutritionalDivs[4]?.textContent) || 0
         };
+
+        // Log what we're about to save for debugging
+        console.log(`💾 Saving meal data:`, {
+            name: itemData.name,
+            amount: itemData.amount,
+            calories: itemData.calories,
+            hasNutritionalData: hasNutritionalData
+        });
 
         const itemId = row.dataset.itemId;
         let savedItem;
