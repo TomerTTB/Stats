@@ -41,8 +41,10 @@ function updateTotals(table) {
 
 function calculateMacroStats() {
     // Get protein level (as percentage of body weight)
-    const proteinLevel = parseFloat(document.getElementById('proteinLevelInput').value) || 0;
-    const fatLevel = parseFloat(document.getElementById('fatLevelInput').value) || 0;
+    const proteinLevelInput = document.getElementById('proteinLevelInput');
+    const fatLevelInput = document.getElementById('fatLevelInput');
+    const proteinLevel = proteinLevelInput.value ? parseFloat(proteinLevelInput.value) : 0;
+    const fatLevel = fatLevelInput.value ? parseFloat(fatLevelInput.value) : 0;
     
     // Calculate target protein and fat in grams
     const targetProteinG = proteinLevel * userWeight;
@@ -82,6 +84,50 @@ function calculateMacroStats() {
     saveMacroSettings();
 }
 
+function calculateMacroStatsWithoutSave() {
+    // Get protein level (as percentage of body weight)
+    const proteinLevelInput = document.getElementById('proteinLevelInput');
+    const fatLevelInput = document.getElementById('fatLevelInput');
+    const proteinLevel = proteinLevelInput.value ? parseFloat(proteinLevelInput.value) : 0;
+    const fatLevel = fatLevelInput.value ? parseFloat(fatLevelInput.value) : 0;
+    
+    // Calculate target protein and fat in grams
+    const targetProteinG = proteinLevel * userWeight;
+    const targetFatG = fatLevel * userWeight;
+    
+    // Calculate calories from protein and fat (protein = 4 cal/g, fat = 9 cal/g)
+    const proteinCalories = targetProteinG * 4;
+    const fatCalories = targetFatG * 9;
+    
+    // Calculate remaining calories for carbs
+    const remainingCalories = Math.max(0, goalCalories - proteinCalories - fatCalories);
+    const carbCalories = remainingCalories;
+    const targetCarbG = carbCalories / 4; // carbs = 4 cal/g
+    
+    // Calculate percentages
+    const proteinPercentage = goalCalories > 0 ? (proteinCalories / goalCalories) * 100 : 0;
+    const fatPercentage = goalCalories > 0 ? (fatCalories / goalCalories) * 100 : 0;
+    const carbPercentage = goalCalories > 0 ? (carbCalories / goalCalories) * 100 : 0;
+    
+    // Update the display
+    document.getElementById('proteinPercentage').textContent = proteinPercentage.toFixed(1);
+    document.getElementById('proteinGrams').textContent = Math.round(targetProteinG);
+    document.getElementById('proteinCalories').textContent = Math.round(proteinCalories);
+    
+    document.getElementById('fatPercentage').textContent = fatPercentage.toFixed(1);
+    document.getElementById('fatGrams').textContent = Math.round(targetFatG);
+    document.getElementById('fatCalories').textContent = Math.round(fatCalories);
+    
+    document.getElementById('carboPercentage').textContent = carbPercentage.toFixed(1);
+    document.getElementById('carboGrams').textContent = Math.round(targetCarbG);
+    document.getElementById('carboCalories').textContent = Math.round(carbCalories);
+    
+    // Update second row with actual values
+    updateHeaderStats();
+    
+    // Note: No saveMacroSettings() call here - this is for loading values only
+}
+
 function updateHeaderStats() {
     const tables = document.querySelectorAll('.meal-table');
     let totals = {
@@ -110,8 +156,10 @@ function updateHeaderStats() {
     const totalProteinExcludingG = proteinFromMealTables; // Only protein from main protein column, excluding Protein G
 
     // Get target values from the first row
-    const proteinLevel = parseFloat(document.getElementById('proteinLevelInput').value) || 0;
-    const fatLevel = parseFloat(document.getElementById('fatLevelInput').value) || 0;
+    const proteinLevelInput = document.getElementById('proteinLevelInput');
+    const fatLevelInput = document.getElementById('fatLevelInput');
+    const proteinLevel = proteinLevelInput.value ? parseFloat(proteinLevelInput.value) : 0;
+    const fatLevel = fatLevelInput.value ? parseFloat(fatLevelInput.value) : 0;
     
     const targetProteinG = proteinLevel * userWeight;
     const targetFatG = fatLevel * userWeight;

@@ -3,6 +3,46 @@ class FoodSearch {
         this.foods = [];
         this.searchResults = new Map(); // Cache for search results
         this.loadFoods();
+        this.setupGlobalDropdownCloser();
+    }
+
+    setupGlobalDropdownCloser() {
+        // Close all dropdowns when clicking on table cells or other interactive elements
+        document.addEventListener('click', (e) => {
+            // If clicking on any input that's not a food search input, close all dropdowns
+            if (e.target.tagName === 'INPUT' && !e.target.classList.contains('food-search-input')) {
+                this.closeAllDropdowns();
+                return;
+            }
+            
+            // If clicking on table cells, close all dropdowns
+            if (e.target.closest('td') && !e.target.closest('.food-search-container')) {
+                this.closeAllDropdowns();
+                return;
+            }
+            
+            // If clicking on buttons or other interactive elements, close all dropdowns
+            if (e.target.tagName === 'BUTTON' || e.target.closest('button')) {
+                this.closeAllDropdowns();
+                return;
+            }
+        });
+
+        // Close all dropdowns when pressing Tab to navigate away
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Tab') {
+                setTimeout(() => {
+                    this.closeAllDropdowns();
+                }, 50);
+            }
+        });
+    }
+
+    closeAllDropdowns() {
+        const allDropdowns = document.querySelectorAll('.food-search-results');
+        allDropdowns.forEach(dropdown => {
+            dropdown.classList.remove('show');
+        });
     }
 
     async loadFoods() {
@@ -39,11 +79,14 @@ class FoodSearch {
         input.addEventListener('input', (e) => this.handleSearch(e, resultsDiv));
         input.addEventListener('focus', () => this.handleSearch({ target: input }, resultsDiv));
 
-        // Close results when clicking outside
-        document.addEventListener('click', (e) => {
-            if (!container.contains(e.target)) {
-                resultsDiv.classList.remove('show');
-            }
+        // Close results when input loses focus
+        input.addEventListener('blur', (e) => {
+            // Small delay to allow for clicking on dropdown items
+            setTimeout(() => {
+                if (!container.contains(document.activeElement)) {
+                    resultsDiv.classList.remove('show');
+                }
+            }, 150);
         });
 
         // Handle keyboard navigation
@@ -78,11 +121,11 @@ class FoodSearch {
                     if (selected) {
                         const foodData = JSON.parse(selected.getAttribute('data-food'));
                         this.handleFoodSelection(foodData, resultsDiv.previousElementSibling);
-                        resultsDiv.classList.remove('show');
+                        this.closeAllDropdowns();
                     }
                     break;
                 case 'Escape':
-                    resultsDiv.classList.remove('show');
+                    this.closeAllDropdowns();
                     break;
             }
         });
@@ -121,7 +164,7 @@ class FoodSearch {
             
             div.addEventListener('click', () => {
                 this.handleFoodSelection(food, resultsDiv.previousElementSibling);
-                resultsDiv.classList.remove('show');
+                this.closeAllDropdowns();
             });
             
             resultsDiv.appendChild(div);
@@ -141,11 +184,14 @@ class FoodSearch {
         // Set the food name in the input
         input.value = food.item;
 
-        // Set the amount if it exists
+        // Set the base amount for calculations, but don't change the user's input
         const amountInput = row.querySelector('input[type="number"]');
         if (amountInput) {
-            amountInput.value = food.amount || '';
-            // Store the base amount
+            // Only set the amount if the field is empty (first time selecting)
+            if (!amountInput.value.trim()) {
+                amountInput.value = food.amount || '';
+            }
+            // Always store the base amount for calculations
             amountInput.setAttribute('data-base-amount', food.amount || '');
         }
 
@@ -171,13 +217,9 @@ class FoodSearch {
             amountInput.dispatchEvent(event);
         }
 
-        // Save the meal data immediately after food selection
-        // This ensures the complete food data is saved to the database
-        if (typeof saveMealData === 'function') {
-            setTimeout(() => {
-                saveMealData(row);
-            }, 100); // Small delay to ensure all DOM updates are complete
-        }
+        // Don't save immediately after food selection - let amount change trigger the save
+        // This prevents race conditions between food selection and amount changes
+        console.log('🔍 Food selection completed - Amount:', amountInput?.value, 'Base amount:', amountInput?.getAttribute('data-base-amount'));
     }
 }
 

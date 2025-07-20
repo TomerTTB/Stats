@@ -151,7 +151,6 @@ function createMealSection(meal) {
                maxlength="5"
                data-meal-id="${meal.id}"
                title="${meal.id === 1 ? 'Change this time to update all meals' : 'Change this meal time independently'}">
-        ${meal.id > 1 ? '<i class="bi bi-pencil-square text-success ms-1" style="font-size: 0.8em;" title="Independent time"></i>' : ''}
     `;
     
     // Right side: copy/paste buttons
@@ -451,6 +450,8 @@ async function handleAmountChange(input) {
     const newAmount = parseFloat(input.value) || 0;
     const baseAmount = parseFloat(input.getAttribute('data-base-amount')) || 0;
 
+    console.log('🔍 Amount change - New amount:', newAmount, 'Base amount:', baseAmount);
+
     if (baseAmount > 0 && newAmount >= 0) {
         const ratio = newAmount / baseAmount;
 
@@ -461,12 +462,30 @@ async function handleAmountChange(input) {
                 div.textContent = newValue;
             }
         });
+        
+        // Update base amount to the new amount if this is a significant change
+        // This ensures that when user navigates between days, the base amount reflects their intended serving size
+        if (Math.abs(newAmount - baseAmount) > 0.1) { // Allow small rounding differences
+            input.setAttribute('data-base-amount', newAmount.toString());
+            
+            // Update base values to current calculated values
+            nutritionalDivs.forEach((div, index) => {
+                const currentValue = parseFloat(div.textContent) || 0;
+                div.setAttribute('data-base-value', currentValue.toString());
+            });
+            
+            console.log('🔍 Updated base amount to:', newAmount, 'and base values to current calculated values');
+        }
     } else {
         nutritionalDivs.forEach(div => div.textContent = '');
     }
 
     updateRowTotals(input);
-    await saveMealData(row);
+    
+    // Small delay to ensure food selection processing is complete
+    setTimeout(async () => {
+        await saveMealData(row);
+    }, 50);
 }
 
 function createFoodItemRow(item) {

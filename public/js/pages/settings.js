@@ -22,7 +22,7 @@ class UserSettings {
         });
 
         // Auto-save on field blur and input changes
-        ['userNameInput', 'sex', 'age', 'weight', 'height', 'activityLevel', 'calorieAdjustment', 'mealInterval'].forEach(id => {
+        ['userNameInput', 'sex', 'age', 'weight', 'height', 'activityLevel', 'mealInterval'].forEach(id => {
             const element = document.getElementById(id);
             if (element) {
                 // Update calculations on input
@@ -103,7 +103,27 @@ class UserSettings {
 
     updateCalculations() {
         const formData = this.getFormData();
-        if (!this.isValidData(formData)) return;
+        if (!this.isValidData(formData)) {
+            // Clear calculations if data is invalid
+            this.bmrValue.textContent = '0';
+            this.totalCalories.textContent = '0';
+            this.weeklyCalories.textContent = '0';
+            return;
+        }
+
+        // Check if we have the required values for calculations
+        const hasAge = formData.age && parseFloat(formData.age) > 0;
+        const hasWeight = formData.weight && parseFloat(formData.weight) > 0;
+        const hasHeight = formData.height && parseFloat(formData.height) > 0;
+        const hasSex = formData.sex && formData.sex !== '';
+
+        if (!hasAge || !hasWeight || !hasHeight || !hasSex) {
+            // Clear calculations if missing required data
+            this.bmrValue.textContent = '0';
+            this.totalCalories.textContent = '0';
+            this.weeklyCalories.textContent = '0';
+            return;
+        }
 
         const { weight, height } = this.getMetricValues();
         const bmr = this.calculateBMR(
@@ -113,12 +133,14 @@ class UserSettings {
             formData.sex
         );
 
-        const totalCals = (bmr * parseFloat(formData.activityLevel)) + parseInt(formData.calorieAdjustment);
+        const totalCals = (bmr * parseFloat(formData.activityLevel));
         const weeklyCals = totalCals * 7;
 
         this.bmrValue.textContent = Math.round(bmr);
         this.totalCalories.textContent = Math.round(totalCals);
         this.weeklyCalories.textContent = Math.round(weeklyCals);
+        
+        console.log('🔍 Settings calculation - BMR:', Math.round(bmr), 'Activity Level:', formData.activityLevel, 'Total Calories:', Math.round(totalCals));
     }
 
     getFormData() {
@@ -130,13 +152,24 @@ class UserSettings {
             weight: document.getElementById('weight').value,
             height: document.getElementById('height').value,
             activityLevel: document.getElementById('activityLevel').value,
-            calorieAdjustment: document.getElementById('calorieAdjustment').value || '0',
-            mealInterval: document.getElementById('mealInterval').value || '3'
+            mealInterval: document.getElementById('mealInterval').value
         };
     }
 
     isValidData(data) {
-        return data.age > 0 && data.weight > 0 && data.height > 0;
+        // For new users, allow empty values (they haven't filled in the form yet)
+        // Only validate if they have actually entered values
+        const hasAge = data.age && parseFloat(data.age) > 0;
+        const hasWeight = data.weight && parseFloat(data.weight) > 0;
+        const hasHeight = data.height && parseFloat(data.height) > 0;
+        
+        // If any field has a value, all required fields must be filled
+        if (hasAge || hasWeight || hasHeight) {
+            return hasAge && hasWeight && hasHeight;
+        }
+        
+        // If all fields are empty, that's valid for new users
+        return true;
     }
 
     showSaveStatus(status) {
@@ -186,12 +219,27 @@ class UserSettings {
         this.showSaveStatus('pending');
 
         try {
-            await API.settings.save({
-                ...formData,
-                bmr: parseFloat(this.bmrValue.textContent),
-                totalCalories: parseFloat(this.totalCalories.textContent),
-                weeklyCalories: parseFloat(this.weeklyCalories.textContent)
-            });
+            // Check if we have enough data for calculations
+            const hasAge = formData.age && parseFloat(formData.age) > 0;
+            const hasWeight = formData.weight && parseFloat(formData.weight) > 0;
+            const hasHeight = formData.height && parseFloat(formData.height) > 0;
+            const hasSex = formData.sex && formData.sex !== '';
+
+            const settingsToSave = { ...formData };
+
+            if (hasAge && hasWeight && hasHeight && hasSex) {
+                // Only include calculations if all required fields are filled
+                settingsToSave.bmr = parseFloat(this.bmrValue.textContent);
+                settingsToSave.totalCalories = parseFloat(this.totalCalories.textContent);
+                settingsToSave.weeklyCalories = parseFloat(this.weeklyCalories.textContent);
+            } else {
+                // For partial saves, don't include calculations
+                settingsToSave.bmr = 0;
+                settingsToSave.totalCalories = 0;
+                settingsToSave.weeklyCalories = 0;
+            }
+
+            await API.settings.save(settingsToSave);
             
             // Update username display after successful save
             this.updateUserDisplay(formData.userName);
@@ -264,7 +312,13 @@ class UserSettings {
             
             const element = document.getElementById(key);
             if (element) {
-                element.value = value || '';
+                if (key === 'activityLevel') {
+                    // For activity level, use the first option (1.2) if empty
+                    element.value = value || '1.2';
+                } else {
+                    // For other fields, use empty string if no value
+                    element.value = value || '';
+                }
             }
         });
     }

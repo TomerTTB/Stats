@@ -61,13 +61,9 @@ app.get('/api/test', (req, res) => {
     res.json({ message: 'API is working' });
 });
 
-// Default route - redirect based on authentication
+// Default route - serve login page (let frontend handle auth)
 app.get('/', (req, res) => {
-    if (req.session.userId) {
-    res.redirect('/diary.html');
-    } else {
-        res.redirect('/login.html');
-    }
+    res.redirect('/login.html');
 });
 
 // Error handling middleware

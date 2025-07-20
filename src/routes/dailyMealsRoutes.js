@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const { authenticateToken } = require('../middleware/auth');
 const mealService = require('../database/mealService');
+const dailyMacroService = require('../database/dailyMacroService');
 
 // Get meals for a specific day - user-specific with authentication
 router.get('/:day', authenticateToken, async (req, res) => {
@@ -188,65 +189,55 @@ router.delete('/:day/meals/:mealId/items', authenticateToken, async (req, res) =
     }
 });
 
-// Update macro levels for a specific day - now using database settings service  
+// Update macro levels for a specific day - now using daily macro service
 router.put('/:day/macros', authenticateToken, async (req, res) => {
     try {
         const { proteinLevel, fatLevel, calorieAdjustment } = req.body;
         const userId = req.user.id;
+        const { day } = req.params;
         
-        // Import settings service
-        const settingsService = require('../database/settingsService');
+        // Save daily macro settings for this specific day
+        const success = await dailyMacroService.saveDailyMacros(userId, day, {
+            proteinLevel: proteinLevel,
+            fatLevel: fatLevel,
+            calorieAdjustment: calorieAdjustment || 0
+        });
         
-        // Get current user settings
-        const currentSettings = await settingsService.getUserSettings(userId);
-        
-        // Update macro settings
-        const updatedSettings = {
-            ...currentSettings,
-            proteinLevel: proteinLevel || currentSettings.proteinLevel || 1.9,
-            fatLevel: fatLevel || currentSettings.fatLevel || 0.8,
-            calorieAdjustment: calorieAdjustment || currentSettings.calorieAdjustment || 0
-        };
-        
-        // Save updated settings to database
-        await settingsService.saveUserSettings(userId, updatedSettings);
-        
-        console.log(`✅ Macro settings updated for user ${userId}: protein=${proteinLevel}, fat=${fatLevel}, calorie=${calorieAdjustment}`);
-        res.json({ message: 'Macro settings updated successfully' });
+        if (success) {
+            console.log(`✅ Daily macro settings updated for user ${userId}, day ${day}: protein=${proteinLevel}, fat=${fatLevel}, calorie=${calorieAdjustment}`);
+            res.json({ message: 'Daily macro settings updated successfully' });
+        } else {
+            res.status(500).json({ error: 'Failed to update daily macro settings' });
+        }
     } catch (error) {
-        console.error('Error updating macro settings:', error);
-        res.status(500).json({ error: 'Failed to update macro settings' });
+        console.error('Error updating daily macro settings:', error);
+        res.status(500).json({ error: 'Failed to update daily macro settings' });
     }
 });
 
-// Add a POST route for macros - now using database settings service
+// Add a POST route for macros - now using daily macro service
 router.post('/:day/macros', authenticateToken, async (req, res) => {
     try {
         const { proteinLevel, fatLevel, calorieAdjustment } = req.body;
         const userId = req.user.id;
+        const { day } = req.params;
         
-        // Import settings service
-        const settingsService = require('../database/settingsService');
+        // Save daily macro settings for this specific day
+        const success = await dailyMacroService.saveDailyMacros(userId, day, {
+            proteinLevel: proteinLevel,
+            fatLevel: fatLevel,
+            calorieAdjustment: calorieAdjustment || 0
+        });
         
-        // Get current user settings
-        const currentSettings = await settingsService.getUserSettings(userId);
-        
-        // Update macro settings
-        const updatedSettings = {
-            ...currentSettings,
-            proteinLevel: proteinLevel || currentSettings.proteinLevel || 1.9,
-            fatLevel: fatLevel || currentSettings.fatLevel || 0.8,
-            calorieAdjustment: calorieAdjustment || currentSettings.calorieAdjustment || 0
-        };
-        
-        // Save updated settings to database
-        await settingsService.saveUserSettings(userId, updatedSettings);
-        
-        console.log(`✅ Macro settings saved for user ${userId}: protein=${proteinLevel}, fat=${fatLevel}, calorie=${calorieAdjustment}`);
-        res.json({ message: 'Macro settings saved successfully' });
+        if (success) {
+            console.log(`✅ Daily macro settings saved for user ${userId}, day ${day}: protein=${proteinLevel}, fat=${fatLevel}, calorie=${calorieAdjustment}`);
+            res.json({ message: 'Daily macro settings saved successfully' });
+        } else {
+            res.status(500).json({ error: 'Failed to save daily macro settings' });
+        }
     } catch (error) {
-        console.error('Error saving macro settings:', error);
-        res.status(500).json({ error: 'Failed to save macro settings' });
+        console.error('Error saving daily macro settings:', error);
+        res.status(500).json({ error: 'Failed to save daily macro settings' });
     }
 });
 

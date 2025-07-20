@@ -115,6 +115,9 @@ class AuthManager {
     // Logout
     async logout() {
         try {
+            // Set redirecting flag to prevent auth checks during logout
+            window.isRedirecting = true;
+            
             if (this.token) {
                 await this.apiRequest('/api/auth/logout', {
                     method: 'POST'
@@ -124,7 +127,10 @@ class AuthManager {
             console.error('Logout error:', error);
         } finally {
             this.clearAuth();
-            window.location.href = '/login.html';
+            // Small delay to ensure auth is cleared before redirect
+            setTimeout(() => {
+                window.location.href = '/login.html';
+            }, 100);
         }
     }
 
@@ -183,6 +189,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Check if current page requires authentication
     const protectedPages = ['/diary.html', '/foods.html', '/reports.html', '/settings.html'];
     const currentPath = window.location.pathname;
+
+    // Skip auth check if we're already on login page or if redirect is in progress
+    if (currentPath === '/login.html' || isRedirecting) {
+        console.log('Skipping auth check - on login page or redirect in progress');
+        return;
+    }
 
     if (protectedPages.includes(currentPath)) {
         // Prevent multiple redirects

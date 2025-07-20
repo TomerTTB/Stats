@@ -74,10 +74,9 @@ class NavigationBar {
         if (logoutBtn) {
             logoutBtn.addEventListener('click', async () => {
                 try {
-                    await API.auth.logout();
-                    // Redirect to login page after successful logout
-                    window.location.href = '/login.html';
-        } catch (error) {
+                    // Use the auth manager's logout method for consistency
+                    await auth.logout();
+                } catch (error) {
                     console.error('Logout error:', error);
                     alert('Logout failed. Please try again.');
                 }

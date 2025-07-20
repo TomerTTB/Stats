@@ -28,28 +28,44 @@ router.post('/', authenticateToken, async (req, res) => {
         const userId = req.user.id;
         const settings = req.body;
         
-        // Validate required fields
-        const requiredFields = ['sex', 'age', 'weight', 'height', 'activityLevel'];
-        for (const field of requiredFields) {
-            if (!settings[field]) {
-                return res.status(400).json({ error: `Missing required field: ${field}` });
+        // Validate required fields - allow partial saves for new users
+        // Only require all fields if user is trying to calculate BMR/calories
+        const hasCalculations = settings.bmr > 0 || settings.totalCalories > 0;
+        
+        if (hasCalculations) {
+            // If user has calculations, all required fields must be filled
+            const requiredFields = ['sex', 'age', 'weight', 'height', 'activityLevel'];
+            for (const field of requiredFields) {
+                if (!settings[field]) {
+                    return res.status(400).json({ error: `Missing required field: ${field}` });
+                }
+            }
+        } else {
+            // For new users or partial saves, only validate activityLevel
+            if (!settings.activityLevel) {
+                return res.status(400).json({ error: 'Missing required field: activityLevel' });
             }
         }
 
-        // Validate numeric fields
-        const numericFields = ['age', 'weight', 'height', 'calorieAdjustment', 'bmr', 'totalCalories', 'mealInterval'];
+        // Validate numeric fields - allow empty values for new users
+        const numericFields = ['age', 'weight', 'height', 'bmr', 'totalCalories', 'mealInterval'];
         for (const field of numericFields) {
-            if (settings[field] !== undefined) {
+            if (settings[field] !== undefined && settings[field] !== null && settings[field] !== '') {
                 settings[field] = parseFloat(settings[field]);
                 if (isNaN(settings[field])) {
                     return res.status(400).json({ error: `Invalid numeric value for field: ${field}` });
                 }
+            } else {
+                // Set empty values to null for database storage
+                settings[field] = null;
             }
         }
 
-        // Validate meal interval
-        if (settings.mealInterval < 1 || settings.mealInterval > 6) {
-            return res.status(400).json({ error: 'Meal interval must be between 1 and 6 hours' });
+        // Validate meal interval - allow empty values for new users
+        if (settings.mealInterval !== null && settings.mealInterval !== undefined && settings.mealInterval !== '') {
+            if (settings.mealInterval < 1 || settings.mealInterval > 6) {
+                return res.status(400).json({ error: 'Meal interval must be between 1 and 6 hours' });
+            }
         }
 
         // Handle userName update - update user profile using SQLite

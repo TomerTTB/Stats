@@ -1,5 +1,6 @@
 const { query, isDatabaseAvailable } = require('./connection');
 const settingsService = require('./settingsService');
+const dailyMacroService = require('./dailyMacroService');
 
 class MealService {
     constructor() {
@@ -64,8 +65,15 @@ class MealService {
                         calories: row.calories,
                         carbs: row.carbs,
                         protein: row.protein,
-                        proteinG: row.protein_general || row.protein, // Use protein_general or fallback to protein
-                        fat: row.fat
+                        proteinG: row.protein_general, // Use protein_general only, no fallback
+                        fat: row.fat,
+                        // Calculate base values from current values (for backward compatibility)
+                        baseAmount: row.amount,
+                        baseCalories: row.calories,
+                        baseCarbs: row.carbs,
+                        baseProtein: row.protein,
+                        baseFat: row.fat,
+                        baseProteinG: row.protein_general
                     });
                 }
             });
@@ -90,15 +98,10 @@ class MealService {
             
             const resultMeals = finalMeals;
             
-            // Get macro settings from user settings
-            let macroSettings = { proteinLevel: 1.9, fatLevel: 0.8, calorieAdjustment: 0 };
+            // Get daily macro settings for this specific day
+            let macroSettings = { proteinLevel: null, fatLevel: null, calorieAdjustment: 0 };
             try {
-                const userSettings = await settingsService.getUserSettings(userId);
-                macroSettings = {
-                    proteinLevel: userSettings.proteinLevel || 1.9,
-                    fatLevel: userSettings.fatLevel || 0.8,
-                    calorieAdjustment: userSettings.calorieAdjustment || 0
-                };
+                macroSettings = await dailyMacroService.getDailyMacros(userId, dayName);
             } catch (settingsError) {
                 console.log('Using default macro settings:', settingsError.message);
             }
@@ -439,16 +442,13 @@ class MealService {
     async getDefaultDayMeals(userId = null) {
         const defaultTimes = ["08:00", "11:00", "14:00", "17:00", "20:00", "23:00"];
         
-        // Get macro settings from user settings if userId provided
-        let macroSettings = { proteinLevel: 1.9, fatLevel: 0.8, calorieAdjustment: 0 };
+        // Get macro settings from daily macro service if userId provided
+        let macroSettings = { proteinLevel: null, fatLevel: null, calorieAdjustment: 0 };
         if (userId) {
             try {
-                const userSettings = await settingsService.getUserSettings(userId);
-                macroSettings = {
-                    proteinLevel: userSettings.proteinLevel || 1.9,
-                    fatLevel: userSettings.fatLevel || 0.8,
-                    calorieAdjustment: userSettings.calorieAdjustment || 0
-                };
+                // For default meals, we'll use the default macro settings
+                // since we don't have a specific day context
+                macroSettings = dailyMacroService.getDefaultMacros();
             } catch (settingsError) {
                 console.log('Using default macro settings for default meals:', settingsError.message);
             }

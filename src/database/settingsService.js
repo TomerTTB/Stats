@@ -29,15 +29,13 @@ class SettingsService {
                 return {
                     userName: '', // Will be populated from user session
                     unitSystem: settings.unit_system || 'metric',
-                    sex: settings.sex || 'male',
-                    age: settings.age || 30,
-                    weight: settings.weight || 70,
-                    height: settings.height || 170,
-                    activityLevel: settings.activity_level || '1.55',
-                    calorieAdjustment: settings.calorie_adjustment || 0,
-                    mealInterval: settings.meal_interval || 3,
-                    proteinLevel: settings.protein_level || 1.9,
-                    fatLevel: settings.fat_level || 0.8,
+                    sex: settings.sex || '',
+                    age: settings.age || '',
+                    weight: settings.weight || '',
+                    height: settings.height || '',
+                    activityLevel: settings.activity_level || '1.2',
+
+                    mealInterval: settings.meal_interval || '',
                     totalCalories: settings.goal_calories || 0,
                     weeklyCalories: (settings.goal_calories || 0) * 7
                 };
@@ -67,21 +65,18 @@ class SettingsService {
                 await query(`
                     UPDATE user_settings 
                     SET goal_calories = ?, height = ?, weight = ?, age = ?, sex = ?,
-                        activity_level = ?, calorie_adjustment = ?, meal_interval = ?, 
-                        unit_system = ?, protein_level = ?, fat_level = ?, updated_at = CURRENT_TIMESTAMP
+                        activity_level = ?, meal_interval = ?, 
+                        unit_system = ?, updated_at = CURRENT_TIMESTAMP
                     WHERE user_id = ?
                 `, [
                     settings.totalCalories || 0,
-                    settings.height || 170,
-                    settings.weight || 70,
-                    settings.age || 30,
-                    settings.sex || 'male',
-                    settings.activityLevel || '1.55',
-                    settings.calorieAdjustment || 0,
-                    settings.mealInterval || 3,
+                    settings.height,
+                    settings.weight,
+                    settings.age,
+                    settings.sex,
+                    settings.activityLevel,
+                    settings.mealInterval,
                     settings.unitSystem || 'metric',
-                    settings.proteinLevel || 1.9,
-                    settings.fatLevel || 0.8,
                     userId
                 ]);
             } else {
@@ -89,21 +84,18 @@ class SettingsService {
                 await query(`
                     INSERT INTO user_settings 
                     (user_id, goal_calories, height, weight, age, sex, 
-                     activity_level, calorie_adjustment, meal_interval, unit_system, protein_level, fat_level)
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                     activity_level, meal_interval, unit_system)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
                 `, [
                     userId,
                     settings.totalCalories || 0,
-                    settings.height || 170,
-                    settings.weight || 70,
-                    settings.age || 30,
-                    settings.sex || 'male',
-                    settings.activityLevel || '1.55',
-                    settings.calorieAdjustment || 0,
-                    settings.mealInterval || 3,
-                    settings.unitSystem || 'metric',
-                    settings.proteinLevel || 1.9,
-                    settings.fatLevel || 0.8
+                    settings.height,
+                    settings.weight,
+                    settings.age,
+                    settings.sex,
+                    settings.activityLevel,
+                    settings.mealInterval,
+                    settings.unitSystem || 'metric'
                 ]);
             }
 
@@ -115,18 +107,18 @@ class SettingsService {
         }
     }
 
-    // Get default settings structure
+    // Get default settings structure (empty for new users)
     getDefaultSettings() {
         return {
             userName: '',
             unitSystem: 'metric',
-            sex: 'male',
-            age: 30,
-            weight: 70,
-            height: 170,
-            activityLevel: '1.55',
-            calorieAdjustment: 0,
-            mealInterval: 3,
+            sex: '', // Empty for new users
+            age: '', // Empty for new users
+            weight: '', // Empty for new users
+            height: '', // Empty for new users
+            activityLevel: '1.2', // First option (Sedentary) for new users
+
+            mealInterval: '', // Empty for new users
             totalCalories: 0,
             weeklyCalories: 0
         };

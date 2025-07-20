@@ -82,8 +82,16 @@ class NutritionReports {
         
         return days.map((day, index) => {
             const totals = this.calculateDayTotals(this.weeklyData[day]);
-            const goalCalories = this.settings?.totalCalories || 2700;
-            const proteinTarget = (this.settings?.weight || 70) * 1.9;
+            
+            // Get daily macro settings for this day
+            const dayData = this.weeklyData[day];
+            const baseGoalCalories = this.settings?.totalCalories || 2700;
+            const dailyAdjustment = dayData.calorieAdjustment || 0;
+            const goalCalories = baseGoalCalories + dailyAdjustment;
+            
+            // Get daily protein level for this day
+            const dailyProteinLevel = dayData.proteinLevel || 0;
+            const proteinTarget = (this.settings?.weight || 70) * dailyProteinLevel;
             
             const calorieAchievement = goalCalories > 0 ? (totals.calories / goalCalories) * 100 : 0;
             
@@ -101,7 +109,8 @@ class NutritionReports {
                 goalCalories,
                 proteinTarget,
                 calorieAchievement,
-                status
+                status,
+                dailyAdjustment
             };
         });
     }
@@ -109,12 +118,17 @@ class NutritionReports {
     updateAchievementStats(weeklyTotals) {
         const totalCalories = weeklyTotals.reduce((sum, day) => sum + day.calories, 0);
         const avgDailyCalories = totalCalories / 7;
-        const goalCalories = this.settings?.totalCalories || 2700;
-        const goalAchievement = goalCalories > 0 ? (avgDailyCalories / goalCalories) * 100 : 0;
         
-        const proteinTarget = (this.settings?.weight || 70) * 1.9;
+        // Calculate average goal based on daily goals
+        const totalGoalCalories = weeklyTotals.reduce((sum, day) => sum + day.goalCalories, 0);
+        const avgGoalCalories = totalGoalCalories / 7;
+        const goalAchievement = avgGoalCalories > 0 ? (avgDailyCalories / avgGoalCalories) * 100 : 0;
+        
+        // Calculate average protein target based on daily protein levels
+        const totalProteinTarget = weeklyTotals.reduce((sum, day) => sum + day.proteinTarget, 0);
+        const avgProteinTarget = totalProteinTarget / 7;
         const avgProtein = weeklyTotals.reduce((sum, day) => sum + day.protein + day.proteinG, 0) / 7;
-        const proteinAchievement = proteinTarget > 0 ? (avgProtein / proteinTarget) * 100 : 0;
+        const proteinAchievement = avgProteinTarget > 0 ? (avgProtein / avgProteinTarget) * 100 : 0;
         
         const daysOnTrack = weeklyTotals.filter(day => 
             day.calorieAchievement >= 95 && day.calorieAchievement <= 105
@@ -133,8 +147,6 @@ class NutritionReports {
         if (this.charts.weeklyCalories) {
             this.charts.weeklyCalories.destroy();
         }
-
-        const goalCalories = this.settings?.totalCalories || 2700;
         
         this.charts.weeklyCalories = new Chart(ctx, {
             type: 'bar',
@@ -157,8 +169,8 @@ class NutritionReports {
                         borderWidth: 2
                     },
                     {
-                        label: 'Goal',
-                        data: new Array(7).fill(goalCalories),
+                        label: 'Daily Goals',
+                        data: weeklyTotals.map(day => day.goalCalories),
                         type: 'line',
                         borderColor: 'rgba(26, 115, 232, 1)',
                         backgroundColor: 'rgba(26, 115, 232, 0.1)',
@@ -199,8 +211,8 @@ class NutritionReports {
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td><strong>${day.day}</strong></td>
-                <td>${Math.round(day.calories)}</td>
-                <td>${(day.protein + day.proteinG).toFixed(1)}</td>
+                <td>${Math.round(day.calories)} / ${Math.round(day.goalCalories)}${day.dailyAdjustment !== 0 ? ` (${day.dailyAdjustment > 0 ? '+' : ''}${day.dailyAdjustment})` : ''}</td>
+                <td>${(day.protein + day.proteinG).toFixed(1)} / ${Math.round(day.proteinTarget)}</td>
                 <td>${day.fat.toFixed(1)}</td>
                 <td>${day.carbs.toFixed(1)}</td>
                 <td><span class="status-badge status-${day.status}">${statusText[day.status]}</span></td>
