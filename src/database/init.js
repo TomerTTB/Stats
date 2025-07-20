@@ -60,6 +60,7 @@ async function initializeDatabase() {
                 user_id TEXT NOT NULL,
                 day TEXT NOT NULL,
                 meal_time TEXT NOT NULL,
+                meal_id INTEGER,
                 food_item TEXT NOT NULL,
                 amount REAL,
                 calories REAL,
@@ -124,6 +125,21 @@ async function initializeDatabase() {
             ON user_weight(user_id, date)
         `);
 
+        // Add meal_id column to existing user_meals table if it doesn't exist
+        try {
+            await query(`
+                ALTER TABLE user_meals 
+                ADD COLUMN meal_id INTEGER
+            `);
+            console.log('✅ Added meal_id column to user_meals table');
+            
+            // Migrate existing data to populate meal_id
+            await migrateExistingMealData();
+        } catch (error) {
+            // Column might already exist, which is fine
+            console.log('ℹ️  meal_id column already exists or not needed');
+        }
+
         console.log('✅ SQLite database schema initialized successfully');
         console.log(`📁 Database location: ${dbPath}`);
         return true;
@@ -131,6 +147,59 @@ async function initializeDatabase() {
         console.error('❌ SQLite schema initialization failed:', error.message);
         console.log('⚠️  Will use JSON files as fallback');
         return false;
+    }
+}
+
+// Migrate existing meal data to populate meal_id column
+async function migrateExistingMealData() {
+    try {
+        const { query } = require('./connection');
+        
+        // Get all meals without meal_id
+        const result = await query(`
+            SELECT * FROM user_meals 
+            WHERE meal_id IS NULL
+            ORDER BY user_id, day, meal_time
+        `);
+        
+        if (result.rows.length === 0) {
+            console.log('ℹ️  No existing meal data to migrate');
+            return;
+        }
+        
+        console.log(`🔄 Migrating ${result.rows.length} meal entries...`);
+        
+        const defaultTimes = ["08:00", "11:00", "14:00", "17:00", "20:00", "23:00"];
+        
+        for (const row of result.rows) {
+            // Determine meal_id based on time proximity to default times
+            let closestMealId = 1;
+            let minDifference = Infinity;
+            
+            for (let i = 0; i < defaultTimes.length; i++) {
+                const defaultTime = defaultTimes[i];
+                const timeDiff = Math.abs(
+                    (parseInt(row.meal_time.split(':')[0]) * 60 + parseInt(row.meal_time.split(':')[1])) -
+                    (parseInt(defaultTime.split(':')[0]) * 60 + parseInt(defaultTime.split(':')[1]))
+                );
+                
+                if (timeDiff < minDifference) {
+                    minDifference = timeDiff;
+                    closestMealId = i + 1;
+                }
+            }
+            
+            // Update the row with the determined meal_id
+            await query(`
+                UPDATE user_meals 
+                SET meal_id = ?
+                WHERE id = ?
+            `, [closestMealId, row.id]);
+        }
+        
+        console.log('✅ Meal data migration completed');
+    } catch (error) {
+        console.error('❌ Meal data migration failed:', error.message);
     }
 }
 

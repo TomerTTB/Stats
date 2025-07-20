@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentation - Food Diary</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="/css/components/navbar.css">
+    <link rel="stylesheet" href="/css/pages/docs.css">
+</head>
+<body>
+    <!-- Navigation will be loaded dynamically -->
+    
+    <div class="docs-container">
+        <!-- Left Navigation Menu -->
+        <aside class="docs-sidebar">
+            <nav class="docs-nav">
+                <div class="docs-nav-section">
+                    <div class="docs-nav-title">Getting Started</div>
+                    <ul class="docs-nav-items">
+                        <li class="docs-nav-item">
+                            <a href="/docs/index.html" class="docs-nav-link active">Introduction</a>
+                        </li>
+                        <li class="docs-nav-item">
+                            <a href="/docs/getting-started/quick-start.html" class="docs-nav-link">Quick Start</a>
+                        </li>
+                        <li class="docs-nav-item">
+                            <a href="/docs/getting-started/setup.html" class="docs-nav-link">Account Setup</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="docs-nav-section">
+                    <div class="docs-nav-title">Features</div>
+                    <ul class="docs-nav-items">
+                        <li class="docs-nav-item">
+                            <a href="/docs/features/food-diary.html" class="docs-nav-link">Food Diary</a>
+                        </li>
+                        <li class="docs-nav-item">
+                            <a href="/docs/features/reports.html" class="docs-nav-link">Reports</a>
+                        </li>
+                        <li class="docs-nav-item">
+                            <a href="/docs/features/foods-db.html" class="docs-nav-link">Foods Database</a>
+                        </li>
+                        <li class="docs-nav-item">
+                            <a href="/docs/features/weight-tracking.html" class="docs-nav-link">Weight Tracking</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="docs-nav-section">
+                    <div class="docs-nav-title">How-to Guides</div>
+                    <ul class="docs-nav-items">
+                        <li class="docs-nav-item">
+                            <a href="/docs/guides/adding-meals.html" class="docs-nav-link">Adding Meals</a>
+                        </li>
+                        <li class="docs-nav-item">
+                            <a href="/docs/guides/tracking-weight.html" class="docs-nav-link">Tracking Weight</a>
+                        </li>
+                        <li class="docs-nav-item">
+                            <a href="/docs/guides/reading-reports.html" class="docs-nav-link">Reading Reports</a>
+                        </li>
+                        <li class="docs-nav-item">
+                            <a href="/docs/guides/managing-foods.html" class="docs-nav-link">Managing Foods</a>
+                        </li>
+                        <li class="docs-nav-item">
+                            <a href="/docs/guides/copying-meals.html" class="docs-nav-link">Copying Meals</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="docs-nav-section">
+                    <div class="docs-nav-title">Security</div>
+                    <ul class="docs-nav-items">
+                        <li class="docs-nav-item">
+                            <a href="/docs/security/index.html" class="docs-nav-link">Security Overview</a>
+                        </li>
+                        <li class="docs-nav-item">
+                            <a href="/docs/security/authentication.html" class="docs-nav-link">Authentication</a>
+                        </li>
+                        <li class="docs-nav-item">
+                            <a href="/docs/security/data-protection.html" class="docs-nav-link">Data Protection</a>
+                        </li>
+                        <li class="docs-nav-item">
+                            <a href="/docs/security/best-practices.html" class="docs-nav-link">Best Practices</a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="docs-content">
+            <h1>Food Diary Documentation</h1>
+            
+            <p>Welcome to the Food Diary documentation! This guide will help you understand how to use the application effectively to track your nutrition and weight goals.</p>
+
+            <h2>What is Food Diary?</h2>
+            <p>Food Diary is a comprehensive nutrition and weight tracking application that helps you:</p>
+            <ul>
+                <li>Track your daily food intake and nutrition</li>
+                <li>Monitor your weight progress</li>
+                <li>Generate detailed nutrition reports</li>
+                <li>Manage your own food database</li>
+            </ul>
+
+            <h2>Key Features</h2>
+            <h3>Food Diary</h3>
+            <p>Record your daily meals and track your nutrition intake. The diary provides a detailed breakdown of calories, proteins, carbs, and fats for each meal.</p>
+
+            <h3>Weight Tracking</h3>
+            <p>Monitor your weight progress with detailed statistics including:</p>
+            <ul>
+                <li>Today's Weight - Your most recent weight measurement</li>
+                <li>Last Change - The difference from your previous weight entry</li>
+                <li>Overall Change - Total weight change since you started tracking</li>
+                <li>Average Change - The average change between consecutive measurements</li>
+                <li>Progress - Your current weight trend</li>
+            </ul>
+
+            <h3>Reports</h3>
+            <p>Get detailed insights into your nutrition and weight data through comprehensive reports and charts.</p>
+
+            <h3>Foods Database</h3>
+            <p>Access and manage a customizable database of foods with their nutritional information.</p>
+
+            <h3>Security & Authentication</h3>
+            <p>Your data is protected with enterprise-level security features:</p>
+            <ul>
+                <li>JWT-based stateless authentication</li>
+                <li>Bcrypt password hashing with salt rounds</li>
+                <li>Rate limiting for login attempts</li>
+                <li>Input validation and sanitization</li>
+                <li>Protected API endpoints</li>
+                <li>Secure token management</li>
+            </ul>
+
+            <h2>Getting Started</h2>
+            <p>To begin using Food Diary, check out our <a href="/docs/getting-started/quick-start.html">Quick Start Guide</a> or explore the specific features in the navigation menu.</p>
+
+            <h2>Security Information</h2>
+            <p>Food Diary takes your data security seriously. Learn about our comprehensive security measures in the <a href="/docs/security/index.html">Security Overview</a> section, including authentication, data protection, and best practices for keeping your information safe.</p>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/components/navbar.js"></script>
+</body>
+</html> 

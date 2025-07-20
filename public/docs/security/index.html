@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security - Food Diary Documentation</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="/css/components/navbar.css">
+    <link rel="stylesheet" href="/css/pages/docs.css">
+</head>
+
+<body>
+    <!-- Navigation will be loaded dynamically -->
+
+    <div class="docs-container">
+        <!-- Left Navigation Menu -->
+        <aside class="docs-sidebar">
+            <nav class="docs-nav">
+                <div class="docs-nav-section">
+                    <div class="docs-nav-title">Getting Started</div>
+                    <ul class="docs-nav-items">
+                        <li class="docs-nav-item">
+                            <a href="/docs/index.html" class="docs-nav-link">Introduction</a>
+                        </li>
+                        <li class="docs-nav-item">
+                            <a href="/docs/getting-started/quick-start.html" class="docs-nav-link">Quick Start</a>
+                        </li>
+                        <li class="docs-nav-item">
+                            <a href="/docs/getting-started/setup.html" class="docs-nav-link">Account Setup</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="docs-nav-section">
+                    <div class="docs-nav-title">Features</div>
+                    <ul class="docs-nav-items">
+                        <li class="docs-nav-item">
+                            <a href="/docs/features/food-diary.html" class="docs-nav-link">Food Diary</a>
+                        </li>
+                        <li class="docs-nav-item">
+                            <a href="/docs/features/reports.html" class="docs-nav-link">Reports</a>
+                        </li>
+                        <li class="docs-nav-item">
+                            <a href="/docs/features/foods-db.html" class="docs-nav-link">Foods Database</a>
+                        </li>
+                        <li class="docs-nav-item">
+                            <a href="/docs/features/weight-tracking.html" class="docs-nav-link">Weight Tracking</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="docs-nav-section">
+                    <div class="docs-nav-title">How-to Guides</div>
+                    <ul class="docs-nav-items">
+                        <li class="docs-nav-item">
+                            <a href="/docs/guides/adding-meals.html" class="docs-nav-link">Adding Meals</a>
+                        </li>
+                        <li class="docs-nav-item">
+                            <a href="/docs/guides/tracking-weight.html" class="docs-nav-link">Tracking Weight</a>
+                        </li>
+                        <li class="docs-nav-item">
+                            <a href="/docs/guides/reading-reports.html" class="docs-nav-link">Reading Reports</a>
+                        </li>
+                        <li class="docs-nav-item">
+                            <a href="/docs/guides/managing-foods.html" class="docs-nav-link">Managing Foods</a>
+                        </li>
+                        <li class="docs-nav-item">
+                            <a href="/docs/guides/copying-meals.html" class="docs-nav-link">Copying Meals</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="docs-nav-section">
+                    <div class="docs-nav-title">Security</div>
+                    <ul class="docs-nav-items">
+                        <li class="docs-nav-item">
+                            <a href="/docs/security/index.html" class="docs-nav-link active">Security Overview</a>
+                        </li>
+                        <li class="docs-nav-item">
+                            <a href="/docs/security/authentication.html" class="docs-nav-link">Authentication</a>
+                        </li>
+                        <li class="docs-nav-item">
+                            <a href="/docs/security/data-protection.html" class="docs-nav-link">Data Protection</a>
+                        </li>
+                        <li class="docs-nav-item">
+                            <a href="/docs/security/best-practices.html" class="docs-nav-link">Best Practices</a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="docs-content">
+            <h1>Security Overview</h1>
+
+            <p>Food Diary takes security seriously. This section outlines the comprehensive security measures
+                implemented to protect your personal data and ensure safe usage of the application.</p>
+
+            <h2>Security Architecture</h2>
+
+            <h3>Multi-Layer Security Approach</h3>
+            <p>Our security implementation follows industry best practices with multiple layers of protection:</p>
+
+            <div class="alert alert-info">
+                <h4><i class="bi bi-shield-check"></i> Security Layers</h4>
+                <ul class="mb-0">
+                    <li><strong>Authentication Layer</strong> - JWT-based stateless authentication</li>
+                    <li><strong>Authorization Layer</strong> - Role-based access control</li>
+                    <li><strong>Data Layer</strong> - Encrypted passwords and secure data storage</li>
+                    <li><strong>Transport Layer</strong> - HTTPS encryption (production)</li>
+                    <li><strong>Application Layer</strong> - Input validation and sanitization</li>
+                </ul>
+            </div>
+
+            <h2>Key Security Features</h2>
+
+            <h3>🔐 JWT Authentication</h3>
+            <p>We use JSON Web Tokens (JWT) for secure, stateless authentication:</p>
+            <ul>
+                <li><strong>Stateless Design</strong> - No server-side session storage required</li>
+                <li><strong>Token Expiration</strong> - Automatic timeout for security</li>
+                <li><strong>Refresh Tokens</strong> - Secure token renewal mechanism</li>
+                <li><strong>Database Verification</strong> - Tokens validated against user database</li>
+            </ul>
+
+            <h3>🔒 Password Security</h3>
+            <p>Your passwords are protected using industry-standard encryption:</p>
+            <ul>
+                <li><strong>Bcrypt Hashing</strong> - One-way encryption with salt</li>
+                <li><strong>12 Salt Rounds</strong> - High computational cost for attackers</li>
+                <li><strong>Password Strength Requirements</strong> - Enforced complexity rules</li>
+                <li><strong>No Plain Text Storage</strong> - Passwords never stored in readable form</li>
+            </ul>
+
+            <h3>🛡️ Attack Prevention</h3>
+            <p>Multiple mechanisms protect against common security threats:</p>
+            <ul>
+                <li><strong>Rate Limiting</strong> - Prevents brute force login attempts</li>
+                <li><strong>SQL Injection Protection</strong> - Parameterized database queries</li>
+                <li><strong>Input Validation</strong> - All user input sanitized and validated</li>
+                <li><strong>XSS Prevention</strong> - Output encoding and content security</li>
+            </ul>
+
+            <h2>Data Protection</h2>
+
+            <h3>Personal Information</h3>
+            <p>Your personal data is protected through:</p>
+            <ul>
+                <li><strong>User Isolation</strong> - Each user's data is completely separate</li>
+                <li><strong>Minimal Data Collection</strong> - Only necessary information is stored</li>
+                <li><strong>Secure Storage</strong> - SQLite database with proper permissions</li>
+                <li><strong>No Third-Party Sharing</strong> - Your data stays with you</li>
+            </ul>
+
+            <h3>Nutrition and Weight Data</h3>
+            <p>Your health information receives special protection:</p>
+            <ul>
+                <li><strong>User-Specific Access</strong> - Only you can see your data</li>
+                <li><strong>Encrypted Transmission</strong> - HTTPS in production</li>
+                <li><strong>Local Storage</strong> - Data stored on your chosen server</li>
+                <li><strong>Export Capability</strong> - You own and control your data</li>
+            </ul>
+
+            <h2>Authentication Flow</h2>
+
+            <h3>Registration Process</h3>
+            <ol>
+                <li>User provides email, name, and password</li>
+                <li>Password strength is validated</li>
+                <li>Email uniqueness is verified</li>
+                <li>Password is hashed with bcrypt</li>
+                <li>User account is created in database</li>
+                <li>JWT tokens are generated and returned</li>
+            </ol>
+
+            <h3>Login Process</h3>
+            <ol>
+                <li>User provides email and password</li>
+                <li>Rate limiting check is performed</li>
+                <li>User is retrieved from database</li>
+                <li>Password is verified against hash</li>
+                <li>JWT tokens are generated</li>
+                <li>Failed attempts are tracked</li>
+            </ol>
+
+            <h3>API Request Protection</h3>
+            <ol>
+                <li>JWT token is extracted from Authorization header</li>
+                <li>Token signature and expiration are verified</li>
+                <li>User existence is confirmed in database</li>
+                <li>Request is authorized for the specific user</li>
+                <li>User context is added to request</li>
+            </ol>
+
+            <h2>Security Configuration</h2>
+
+            <h3>Environment Variables</h3>
+            <p>Critical security settings are configured through environment variables:</p>
+
+            <pre><code># JWT Configuration
+JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
+JWT_EXPIRES_IN=24h
+JWT_REFRESH_SECRET=your-refresh-secret-key-different-from-main
+JWT_REFRESH_EXPIRES_IN=7d
+
+# Security Settings
+BCRYPT_SALT_ROUNDS=12
+MAX_LOGIN_ATTEMPTS=5
+LOCKOUT_TIME_MINUTES=15
+
+# Database Security
+DB_PATH=./src/data/nutrition_app.db
+NODE_ENV=production</code></pre>
+
+            <h3>Production Security Checklist</h3>
+            <div class="alert alert-warning">
+                <h4><i class="bi bi-exclamation-triangle"></i> Before Going Live</h4>
+                <ul class="mb-0">
+                    <li>✅ Change all default JWT secrets</li>
+                    <li>✅ Enable HTTPS/SSL certificates</li>
+                    <li>✅ Set NODE_ENV=production</li>
+                    <li>✅ Configure proper CORS settings</li>
+                    <li>✅ Set up database backups</li>
+                    <li>✅ Monitor authentication logs</li>
+                    <li>✅ Implement proper error logging</li>
+                    <li>✅ Set up firewall rules</li>
+                </ul>
+            </div>
+
+            <h2>Security Monitoring</h2>
+
+            <h3>What We Log</h3>
+            <ul>
+                <li>Failed login attempts with IP addresses</li>
+                <li>Successful authentication events</li>
+                <li>API access patterns and errors</li>
+                <li>Database connection issues</li>
+                <li>Security-related errors and warnings</li>
+            </ul>
+
+            <h3>What We Don't Log</h3>
+            <ul>
+                <li>Passwords (plain text or hashed)</li>
+                <li>JWT token contents</li>
+                <li>Personal nutrition data details</li>
+                <li>Sensitive user information</li>
+            </ul>
+
+            <h2>Incident Response</h2>
+
+            <h3>If You Suspect a Security Issue</h3>
+            <ol>
+                <li><strong>Change Your Password</strong> - Immediately update your password</li>
+                <li><strong>Log Out All Sessions</strong> - Use the logout functionality</li>
+                <li><strong>Check Your Data</strong> - Review your recent activity</li>
+                <li><strong>Report the Issue</strong> - Contact the system administrator</li>
+            </ol>
+
+            <h3>Common Security Indicators</h3>
+            <ul>
+                <li>Unexpected login notifications</li>
+                <li>Changes to your data you didn't make</li>
+                <li>Unusual system behavior</li>
+                <li>Requests for sensitive information</li>
+            </ul>
+
+            <h2>Privacy Commitment</h2>
+
+            <h3>Data Ownership</h3>
+            <p>You maintain complete ownership of your data:</p>
+            <ul>
+                <li>Your nutrition and weight data belongs to you</li>
+                <li>You can export your data at any time</li>
+                <li>You can delete your account and all associated data</li>
+                <li>No third-party data sharing without explicit consent</li>
+            </ul>
+
+            <h3>Transparency</h3>
+            <p>We believe in security through transparency:</p>
+            <ul>
+                <li>Open source security implementations</li>
+                <li>Clear documentation of security measures</li>
+                <li>Regular security updates and improvements</li>
+                <li>Community-driven security enhancements</li>
+            </ul>
+
+            <p class="mt-4">
+                <strong>Next:</strong> Learn more about <a href="/docs/security/authentication.html">authentication
+                    details</a> or <a href="/docs/security/data-protection.html">data protection measures</a>.
+            </p>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/components/navbar.js"></script>
+</body>
+
+</html>

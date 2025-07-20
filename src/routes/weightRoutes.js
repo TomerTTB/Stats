@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const { requireAuth } = require('../middleware/auth');
+const { authenticateToken } = require('../middleware/auth');
 const weightService = require('../database/weightService');
 
 // GET - Get all weight entries for a user
-router.get('/', requireAuth, async (req, res) => {
+router.get('/', authenticateToken, async (req, res) => {
     console.log('Handling GET request for /api/weight');
     try {
         const userId = req.user.id;
@@ -17,7 +17,7 @@ router.get('/', requireAuth, async (req, res) => {
 });
 
 // POST - Add a new weight entry
-router.post('/', requireAuth, async (req, res) => {
+router.post('/', authenticateToken, async (req, res) => {
     console.log('Handling POST request for /api/weight');
     try {
         const userId = req.user.id;
@@ -59,7 +59,7 @@ router.post('/', requireAuth, async (req, res) => {
 });
 
 // PUT - Update an existing weight entry
-router.put('/:id', requireAuth, async (req, res) => {
+router.put('/:id', authenticateToken, async (req, res) => {
     console.log('Handling PUT request for /api/weight/:id');
     try {
         const userId = req.user.id;
@@ -96,7 +96,7 @@ router.put('/:id', requireAuth, async (req, res) => {
 });
 
 // DELETE - Delete a weight entry
-router.delete('/:id', requireAuth, async (req, res) => {
+router.delete('/:id', authenticateToken, async (req, res) => {
     console.log('Handling DELETE request for /api/weight/:id');
     try {
         const userId = req.user.id;

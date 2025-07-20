@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Diary - Food Diary Documentation</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="/css/components/navbar.css">
+    <link rel="stylesheet" href="/css/pages/docs.css">
+</head>
+<body>
+    <!-- Navigation will be loaded dynamically -->
+    
+    <div class="docs-container">
+        <!-- Left Navigation Menu -->
+        <aside class="docs-sidebar">
+            <nav class="docs-nav">
+                <div class="docs-nav-section">
+                    <div class="docs-nav-title">Getting Started</div>
+                    <ul class="docs-nav-items">
+                        <li class="docs-nav-item">
+                            <a href="/docs/index.html" class="docs-nav-link">Introduction</a>
+                        </li>
+                        <li class="docs-nav-item">
+                            <a href="/docs/getting-started/quick-start.html" class="docs-nav-link">Quick Start</a>
+                        </li>
+                        <li class="docs-nav-item">
+                            <a href="/docs/getting-started/setup.html" class="docs-nav-link">Account Setup</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="docs-nav-section">
+                    <div class="docs-nav-title">Features</div>
+                    <ul class="docs-nav-items">
+                        <li class="docs-nav-item">
+                            <a href="/docs/features/food-diary.html" class="docs-nav-link active">Food Diary</a>
+                        </li>
+                        <li class="docs-nav-item">
+                            <a href="/docs/features/reports.html" class="docs-nav-link">Reports</a>
+                        </li>
+                        <li class="docs-nav-item">
+                            <a href="/docs/features/foods-db.html" class="docs-nav-link">Foods Database</a>
+                        </li>
+                        <li class="docs-nav-item">
+                            <a href="/docs/features/weight-tracking.html" class="docs-nav-link">Weight Tracking</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="docs-nav-section">
+                    <div class="docs-nav-title">How-to Guides</div>
+                    <ul class="docs-nav-items">
+                        <li class="docs-nav-item">
+                            <a href="/docs/guides/adding-meals.html" class="docs-nav-link">Adding Meals</a>
+                        </li>
+                        <li class="docs-nav-item">
+                            <a href="/docs/guides/tracking-weight.html" class="docs-nav-link">Tracking Weight</a>
+                        </li>
+                        <li class="docs-nav-item">
+                            <a href="/docs/guides/reading-reports.html" class="docs-nav-link">Reading Reports</a>
+                        </li>
+                        <li class="docs-nav-item">
+                            <a href="/docs/guides/managing-foods.html" class="docs-nav-link">Managing Foods</a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="docs-content">
+            <h1>Food Diary</h1>
+            
+            <p>The Food Diary is the core feature of the application, allowing you to track your daily meals and monitor your nutrition intake in real-time.</p>
+
+            <h2>Diary Overview</h2>
+            <h3>Daily Structure</h3>
+            <p>Your food diary is organized by:</p>
+            <ul>
+                <li><strong>Days:</strong> Each day has its own diary page</li>
+                <li><strong>Meal Times:</strong> Customizable time slots for your meals</li>
+                <li><strong>Food Items:</strong> Individual foods and portions for each meal</li>
+            </ul>
+
+            <h2>Key Features</h2>
+            <h3>Meal Management</h3>
+            <ul>
+                <li><strong>Flexible Meal Times:</strong>
+                    <ul>
+                        <li>Adjust meal times to match your schedule</li>
+                        <li>Add or remove meal slots as needed</li>
+                        <li>Automatically spaced based on your meal interval setting</li>
+                    </ul>
+                </li>
+                <li><strong>Food Entry:</strong>
+                    <ul>
+                        <li>Quick food search with auto-complete</li>
+                        <li>Portion size adjustment</li>
+                        <li>Multiple items per meal</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h3>Nutrition Tracking</h3>
+            <ul>
+                <li><strong>Real-time Totals:</strong>
+                    <ul>
+                        <li>Daily calorie count</li>
+                        <li>Macronutrient breakdown (protein, carbs, fat)</li>
+                        <li>Progress towards daily goals</li>
+                    </ul>
+                </li>
+                <li><strong>Meal-specific Totals:</strong>
+                    <ul>
+                        <li>Calories per meal</li>
+                        <li>Macronutrients per meal</li>
+                        <li>Percentage of daily targets</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h2>Using the Food Diary</h2>
+            <h3>Navigation</h3>
+            <ul>
+                <li><strong>Day Selection:</strong>
+                    <ul>
+                        <li>Use the calendar to select different days</li>
+                        <li>Quick navigation between days</li>
+                        <li>Today's diary is loaded by default</li>
+                    </ul>
+                </li>
+                <li><strong>Meal Navigation:</strong>
+                    <ul>
+                        <li>Scroll through meals chronologically</li>
+                        <li>Click any meal to expand/collapse details</li>
+                        <li>Quick jump to specific meal times</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h3>Adding Foods</h3>
+            <ol>
+                <li>Click on a meal time slot</li>
+                <li>Use the search bar to find foods</li>
+                <li>Select the food from search results</li>
+                <li>Adjust the portion size</li>
+                <li>Click "Add" to include in your meal</li>
+            </ol>
+
+            <h3>Editing and Deleting</h3>
+            <ul>
+                <li><strong>Edit Food Items:</strong>
+                    <ul>
+                        <li>Click the edit icon next to any food</li>
+                        <li>Adjust portion size or details</li>
+                        <li>Save changes</li>
+                    </ul>
+                </li>
+                <li><strong>Remove Items:</strong>
+                    <ul>
+                        <li>Click the delete icon</li>
+                        <li>Confirm deletion</li>
+                        <li>Totals update automatically</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h2>Tips and Best Practices</h2>
+            <ul>
+                <li>Log foods as you eat them for better accuracy</li>
+                <li>Use the quick search feature for frequently eaten foods</li>
+                <li>Check your daily totals against your goals</li>
+                <li>Adjust portion sizes to match your actual intake</li>
+                <li>Review your diary at the end of each day</li>
+            </ul>
+
+            <h2>Related Guides</h2>
+            <ul>
+                <li><a href="/docs/guides/adding-meals.html">Detailed guide on adding meals</a></li>
+                <li><a href="/docs/features/foods-db.html">Managing the Foods Database</a></li>
+                <li><a href="/docs/features/reports.html">Understanding your nutrition reports</a></li>
+            </ul>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/components/navbar.js"></script>
+    <script src="/js/pages/docs.js"></script>
+</body>
+</html> 

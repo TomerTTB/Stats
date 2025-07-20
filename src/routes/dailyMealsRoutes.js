@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const { requireAuth } = require('../middleware/auth');
+const { authenticateToken } = require('../middleware/auth');
 const mealService = require('../database/mealService');
 
 // Get meals for a specific day - user-specific with authentication
-router.get('/:day', requireAuth, async (req, res) => {
+router.get('/:day', authenticateToken, async (req, res) => {
     console.log('Handling GET request for /api/daily-meals/:day');
     try {
         const day = req.params.day.toLowerCase();
@@ -19,21 +19,23 @@ router.get('/:day', requireAuth, async (req, res) => {
 });
 
 // Update meal time - user-specific with authentication
-router.put('/:day/meals/:mealId/time', requireAuth, async (req, res) => {
+router.put('/:day/meals/:mealId/time', authenticateToken, async (req, res) => {
     console.log('Handling PUT request for /api/daily-meals/:day/meals/:mealId/time');
     try {
         const { day, mealId } = req.params;
         const { time } = req.body;
         const userId = req.user.id;
         
-        // Get current meal data to find the old time
-        const dayData = await mealService.getUserDayMeals(userId, day);
-        const meal = dayData.meals.find(m => m.id === parseInt(mealId));
-        if (!meal) {
-            return res.status(404).json({ error: 'Meal not found' });
+        // Handle meal time updates - directly create placeholder if meal doesn't exist
+        const defaultTimes = ["08:00", "11:00", "14:00", "17:00", "20:00", "23:00"];
+        const mealIndex = parseInt(mealId) - 1;
+        
+        if (mealIndex < 0 || mealIndex >= defaultTimes.length) {
+            return res.status(400).json({ error: 'Invalid meal ID' });
         }
 
-        const success = await mealService.updateMealTime(userId, day, meal.time, time);
+        // For meal time updates, we'll directly handle creating/updating the placeholder
+        const success = await mealService.setMealTime(userId, day, parseInt(mealId), time);
         if (success) {
             res.json({ message: 'Meal time updated successfully' });
         } else {
@@ -46,7 +48,7 @@ router.put('/:day/meals/:mealId/time', requireAuth, async (req, res) => {
 });
 
 // Add item to meal for a specific day - user-specific with authentication
-router.post('/:day/meals/:mealId/items', requireAuth, async (req, res) => {
+router.post('/:day/meals/:mealId/items', authenticateToken, async (req, res) => {
     console.log('Handling POST request for /api/daily-meals/:day/meals/:mealId/items');
     console.log('📦 Received item data:', JSON.stringify(req.body, null, 2));
     try {
@@ -54,14 +56,31 @@ router.post('/:day/meals/:mealId/items', requireAuth, async (req, res) => {
         const newItem = req.body;
         const userId = req.user.id;
         
-        // Get meal time from mealId (assuming mealId corresponds to time)
-        const dayData = await mealService.getUserDayMeals(userId, day);
-        const meal = dayData.meals.find(m => m.id === parseInt(mealId));
-        if (!meal) {
-            return res.status(404).json({ error: 'Meal not found' });
+        // Get meal time from the item data or fallback to default
+        let mealTime = newItem.mealTime;
+        if (!mealTime) {
+            // Fallback: get meal time from mealId
+            const dayData = await mealService.getUserDayMeals(userId, day);
+            let meal = dayData.meals.find(m => m.id === parseInt(mealId));
+            
+            // If meal doesn't exist, create it with default time
+            if (!meal) {
+                const defaultTimes = ["08:00", "11:00", "14:00", "17:00", "20:00", "23:00"];
+                const mealIndex = parseInt(mealId) - 1;
+                if (mealIndex >= 0 && mealIndex < defaultTimes.length) {
+                    mealTime = defaultTimes[mealIndex];
+                } else {
+                    return res.status(400).json({ error: 'Invalid meal ID' });
+                }
+            } else {
+                mealTime = meal.time;
+            }
         }
         
-        const addedItem = await mealService.addMealItem(userId, day, meal.time, newItem);
+        // Remove mealTime from itemData before passing to addMealItem
+        const { mealTime: _, ...itemDataWithoutTime } = newItem;
+        
+        const addedItem = await mealService.addMealItem(userId, day, mealTime, itemDataWithoutTime, parseInt(mealId));
         if (addedItem) {
             res.json(addedItem);
         } else {
@@ -74,7 +93,7 @@ router.post('/:day/meals/:mealId/items', requireAuth, async (req, res) => {
 });
 
 // Update item in meal for a specific day - user-specific with authentication
-router.put('/:day/meals/:mealId/items/:itemId', requireAuth, async (req, res) => {
+router.put('/:day/meals/:mealId/items/:itemId', authenticateToken, async (req, res) => {
     console.log('Handling PUT request for /api/daily-meals/:day/meals/:mealId/items/:itemId');
     try {
         const { day, mealId, itemId } = req.params;
@@ -83,9 +102,21 @@ router.put('/:day/meals/:mealId/items/:itemId', requireAuth, async (req, res) =>
         
         // Get meal time from mealId
         const dayData = await mealService.getUserDayMeals(userId, day);
-        const meal = dayData.meals.find(m => m.id === parseInt(mealId));
+        let meal = dayData.meals.find(m => m.id === parseInt(mealId));
+        
+        // If meal doesn't exist, create it with default time
         if (!meal) {
-            return res.status(404).json({ error: 'Meal not found' });
+            const defaultTimes = ["08:00", "11:00", "14:00", "17:00", "20:00", "23:00"];
+            const mealIndex = parseInt(mealId) - 1;
+            if (mealIndex >= 0 && mealIndex < defaultTimes.length) {
+                meal = {
+                    id: parseInt(mealId),
+                    time: defaultTimes[mealIndex],
+                    items: []
+                };
+            } else {
+                return res.status(400).json({ error: 'Invalid meal ID' });
+            }
         }
 
         const result = await mealService.updateMealItem(userId, day, meal.time, itemId, updatedItem);
@@ -101,7 +132,7 @@ router.put('/:day/meals/:mealId/items/:itemId', requireAuth, async (req, res) =>
 });
 
 // Delete item from meal for a specific day - user-specific with authentication
-router.delete('/:day/meals/:mealId/items/:itemId', requireAuth, async (req, res) => {
+router.delete('/:day/meals/:mealId/items/:itemId', authenticateToken, async (req, res) => {
     console.log('Handling DELETE request for /api/daily-meals/:day/meals/:mealId/items/:itemId');
     try {
         const { day, mealId, itemId } = req.params;
@@ -109,9 +140,21 @@ router.delete('/:day/meals/:mealId/items/:itemId', requireAuth, async (req, res)
         
         // Get meal time from mealId
         const dayData = await mealService.getUserDayMeals(userId, day);
-        const meal = dayData.meals.find(m => m.id === parseInt(mealId));
+        let meal = dayData.meals.find(m => m.id === parseInt(mealId));
+        
+        // If meal doesn't exist, create it with default time
         if (!meal) {
-            return res.status(404).json({ error: 'Meal not found' });
+            const defaultTimes = ["08:00", "11:00", "14:00", "17:00", "20:00", "23:00"];
+            const mealIndex = parseInt(mealId) - 1;
+            if (mealIndex >= 0 && mealIndex < defaultTimes.length) {
+                meal = {
+                    id: parseInt(mealId),
+                    time: defaultTimes[mealIndex],
+                    items: []
+                };
+            } else {
+                return res.status(400).json({ error: 'Invalid meal ID' });
+            }
         }
 
         const success = await mealService.deleteMealItem(userId, day, meal.time, itemId);
@@ -126,8 +169,27 @@ router.delete('/:day/meals/:mealId/items/:itemId', requireAuth, async (req, res)
     }
 });
 
+// Delete all items from meal for a specific day - user-specific with authentication
+router.delete('/:day/meals/:mealId/items', authenticateToken, async (req, res) => {
+    console.log('Handling DELETE request for /api/daily-meals/:day/meals/:mealId/items');
+    try {
+        const { day, mealId } = req.params;
+        const userId = req.user.id;
+        
+        const success = await mealService.deleteAllMealItems(userId, day, parseInt(mealId));
+        if (success) {
+            res.json({ message: 'All items deleted successfully' });
+        } else {
+            res.status(404).json({ error: 'Meal not found or failed to delete items' });
+        }
+    } catch (error) {
+        console.error('Error in DELETE /api/daily-meals/:day/meals/:mealId/items:', error);
+        res.status(500).json({ error: 'Failed to delete items' });
+    }
+});
+
 // Update macro levels for a specific day - now using database settings service  
-router.put('/:day/macros', requireAuth, async (req, res) => {
+router.put('/:day/macros', authenticateToken, async (req, res) => {
     try {
         const { proteinLevel, fatLevel, calorieAdjustment } = req.body;
         const userId = req.user.id;
@@ -158,7 +220,7 @@ router.put('/:day/macros', requireAuth, async (req, res) => {
 });
 
 // Add a POST route for macros - now using database settings service
-router.post('/:day/macros', requireAuth, async (req, res) => {
+router.post('/:day/macros', authenticateToken, async (req, res) => {
     try {
         const { proteinLevel, fatLevel, calorieAdjustment } = req.body;
         const userId = req.user.id;
@@ -185,6 +247,25 @@ router.post('/:day/macros', requireAuth, async (req, res) => {
     } catch (error) {
         console.error('Error saving macro settings:', error);
         res.status(500).json({ error: 'Failed to save macro settings' });
+    }
+});
+
+// Clean up duplicate placeholders for a specific day
+router.post('/:day/cleanup-placeholders', authenticateToken, async (req, res) => {
+    console.log('Handling POST request for /api/daily-meals/:day/cleanup-placeholders');
+    try {
+        const { day } = req.params;
+        const userId = req.user.id;
+        
+        const success = await mealService.cleanupDayPlaceholders(userId, day);
+        if (success) {
+            res.json({ message: 'Placeholders cleaned up successfully' });
+        } else {
+            res.status(500).json({ error: 'Failed to cleanup placeholders' });
+        }
+    } catch (error) {
+        console.error('Error in POST /api/daily-meals/:day/cleanup-placeholders:', error);
+        res.status(500).json({ error: 'Failed to cleanup placeholders' });
     }
 });
 

@@ -302,4 +302,64 @@ tfoot tr td {
     .meals-row {
         flex-direction: row;
     }
+}/
+* Copy/Paste button styling */
+.copy-meal-btn, .paste-meal-btn {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.copy-meal-btn:hover {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+    color: white;
+}
+
+.paste-meal-btn:hover:not(:disabled) {
+    background-color: #198754;
+    border-color: #198754;
+    color: white;
+}
+
+.paste-meal-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Meal header improvements */
+.meal-header {
+    margin-bottom: 15px;
+    border-bottom: 1px solid #e9ecef;
+    padding-bottom: 10px;
+}
+
+.meal-header .d-flex.justify-content-between {
+    align-items: center;
+}
+
+/* Copy/paste message styling */
+#meal-copy-paste-messages .alert {
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+/* Button group spacing */
+.gap-2 {
+    gap: 0.5rem;
+}
+
+/* Responsive adjustments for copy/paste buttons */
+@media (max-width: 768px) {
+    .copy-meal-btn, .paste-meal-btn {
+        font-size: 0.7rem;
+        padding: 0.2rem 0.4rem;
+    }
+    
+    .copy-meal-btn i, .paste-meal-btn i {
+        font-size: 0.8rem;
+    }
 }

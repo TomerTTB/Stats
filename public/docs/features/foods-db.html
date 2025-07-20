@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Foods Database - Food Diary Documentation</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="/css/components/navbar.css">
+    <link rel="stylesheet" href="/css/pages/docs.css">
+</head>
+<body>
+    <!-- Navigation will be loaded dynamically -->
+    
+    <div class="docs-container">
+        <!-- Left Navigation Menu -->
+        <aside class="docs-sidebar">
+            <nav class="docs-nav">
+                <div class="docs-nav-section">
+                    <div class="docs-nav-title">Getting Started</div>
+                    <ul class="docs-nav-items">
+                        <li class="docs-nav-item">
+                            <a href="/docs/index.html" class="docs-nav-link">Introduction</a>
+                        </li>
+                        <li class="docs-nav-item">
+                            <a href="/docs/getting-started/quick-start.html" class="docs-nav-link">Quick Start</a>
+                        </li>
+                        <li class="docs-nav-item">
+                            <a href="/docs/getting-started/setup.html" class="docs-nav-link">Account Setup</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="docs-nav-section">
+                    <div class="docs-nav-title">Features</div>
+                    <ul class="docs-nav-items">
+                        <li class="docs-nav-item">
+                            <a href="/docs/features/food-diary.html" class="docs-nav-link">Food Diary</a>
+                        </li>
+                        <li class="docs-nav-item">
+                            <a href="/docs/features/reports.html" class="docs-nav-link">Reports</a>
+                        </li>
+                        <li class="docs-nav-item">
+                            <a href="/docs/features/foods-db.html" class="docs-nav-link active">Foods Database</a>
+                        </li>
+                        <li class="docs-nav-item">
+                            <a href="/docs/features/weight-tracking.html" class="docs-nav-link">Weight Tracking</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="docs-nav-section">
+                    <div class="docs-nav-title">How-to Guides</div>
+                    <ul class="docs-nav-items">
+                        <li class="docs-nav-item">
+                            <a href="/docs/guides/adding-meals.html" class="docs-nav-link">Adding Meals</a>
+                        </li>
+                        <li class="docs-nav-item">
+                            <a href="/docs/guides/tracking-weight.html" class="docs-nav-link">Tracking Weight</a>
+                        </li>
+                        <li class="docs-nav-item">
+                            <a href="/docs/guides/reading-reports.html" class="docs-nav-link">Reading Reports</a>
+                        </li>
+                        <li class="docs-nav-item">
+                            <a href="/docs/guides/managing-foods.html" class="docs-nav-link">Managing Foods</a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="docs-content">
+            <h1>Foods Database</h1>
+            
+            <p>The Foods Database is your personal repository of food items and their nutritional information. This feature allows you to maintain a customized list of foods you commonly eat, making meal tracking quick and accurate.</p>
+
+            <h2>Database Overview</h2>
+            <h3>Food Information</h3>
+            <p>Each food entry contains:</p>
+            <ul>
+                <li><strong>Basic Information:</strong>
+                    <ul>
+                        <li>Food name</li>
+                        <li>Standard portion size</li>
+                        <li>Unit of measurement</li>
+                    </ul>
+                </li>
+                <li><strong>Nutritional Values:</strong>
+                    <ul>
+                        <li>Calories per portion</li>
+                        <li>Protein content</li>
+                        <li>Carbohydrate content</li>
+                        <li>Fat content</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h2>Managing Foods</h2>
+            <h3>Adding New Foods</h3>
+            <ol>
+                <li>Navigate to the Foods DB page</li>
+                <li>Click "Add New Food"</li>
+                <li>Fill in the food details:
+                    <ul>
+                        <li>Name of the food</li>
+                        <li>Portion size and unit</li>
+                        <li>Nutritional information</li>
+                    </ul>
+                </li>
+                <li>Click "Save" to add to database</li>
+            </ol>
+
+            <h3>Editing Foods</h3>
+            <ul>
+                <li><strong>Modifying Entries:</strong>
+                    <ul>
+                        <li>Click the edit icon next to any food</li>
+                        <li>Update the necessary information</li>
+                        <li>Save changes</li>
+                    </ul>
+                </li>
+                <li><strong>Deleting Entries:</strong>
+                    <ul>
+                        <li>Click the delete icon</li>
+                        <li>Confirm deletion</li>
+                        <li>Food will be removed from database</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h2>Using the Database</h2>
+            <h3>Searching Foods</h3>
+            <ul>
+                <li><strong>Quick Search:</strong>
+                    <ul>
+                        <li>Type in the search bar</li>
+                        <li>Results update as you type</li>
+                        <li>Click a food to select it</li>
+                    </ul>
+                </li>
+                <li><strong>Advanced Search:</strong>
+                    <ul>
+                        <li>Use filters to narrow results</li>
+                        <li>Sort by different criteria</li>
+                        <li>View detailed nutritional info</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h3>Food Selection</h3>
+            <ul>
+                <li><strong>From Food Diary:</strong>
+                    <ul>
+                        <li>Search while adding meals</li>
+                        <li>Quick access to common foods</li>
+                        <li>Adjust portions as needed</li>
+                    </ul>
+                </li>
+                <li><strong>From Database Page:</strong>
+                    <ul>
+                        <li>Browse all foods</li>
+                        <li>View detailed information</li>
+                        <li>Manage food entries</li>
+                    </ul>
+                </li>
+            </ul>
+
+            <h2>Best Practices</h2>
+            <ul>
+                <li>Keep food names clear and descriptive</li>
+                <li>Use consistent portion sizes</li>
+                <li>Double-check nutritional information</li>
+                <li>Regularly update commonly used foods</li>
+                <li>Remove unused or duplicate entries</li>
+            </ul>
+
+            <h2>Tips for Accuracy</h2>
+            <ul>
+                <li>Use reliable sources for nutritional information</li>
+                <li>Include brand names when relevant</li>
+                <li>Note any special preparation methods</li>
+                <li>Keep portion sizes realistic</li>
+                <li>Update information if products change</li>
+            </ul>
+
+            <h2>Related Guides</h2>
+            <ul>
+                <li><a href="/docs/guides/managing-foods.html">Detailed guide on managing foods</a></li>
+                <li><a href="/docs/guides/adding-meals.html">Adding meals using the database</a></li>
+                <li><a href="/docs/features/food-diary.html">Using foods in your diary</a></li>
+            </ul>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/components/navbar.js"></script>
+    <script src="/js/pages/docs.js"></script>
+</body>
+</html> 

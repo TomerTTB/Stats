@@ -36,7 +36,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 const foodsRoutes = require('./src/routes/foodsRoutes');
 const dailyMealsRoutes = require('./src/routes/dailyMealsRoutes');
 const settingsRoutes = require('./src/routes/settingsRoutes');
-const authRoutes = require('./src/routes/authRoutes');
+const authRoutes = require('./src/routes/auth'); // Use JWT-based auth
 const weightRoutes = require('./src/routes/weightRoutes');
 
 // Ensure data directory exists for SQLite database

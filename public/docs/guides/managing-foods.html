@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Managing Foods - Food Diary Documentation</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="/css/components/navbar.css">
+    <link rel="stylesheet" href="/css/pages/docs.css">
+</head>
+<body>
+    <!-- Navigation will be loaded dynamically -->
+    
+    <div class="docs-container">
+        <!-- Left Navigation Menu -->
+        <aside class="docs-sidebar">
+            <nav class="docs-nav">
+                <div class="docs-nav-section">
+                    <div class="docs-nav-title">Getting Started</div>
+                    <ul class="docs-nav-items">
+                        <li class="docs-nav-item">
+                            <a href="/docs/index.html" class="docs-nav-link">Introduction</a>
+                        </li>
+                        <li class="docs-nav-item">
+                            <a href="/docs/getting-started/quick-start.html" class="docs-nav-link">Quick Start</a>
+                        </li>
+                        <li class="docs-nav-item">
+                            <a href="/docs/getting-started/setup.html" class="docs-nav-link">Account Setup</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="docs-nav-section">
+                    <div class="docs-nav-title">Features</div>
+                    <ul class="docs-nav-items">
+                        <li class="docs-nav-item">
+                            <a href="/docs/features/food-diary.html" class="docs-nav-link">Food Diary</a>
+                        </li>
+                        <li class="docs-nav-item">
+                            <a href="/docs/features/reports.html" class="docs-nav-link">Reports</a>
+                        </li>
+                        <li class="docs-nav-item">
+                            <a href="/docs/features/foods-db.html" class="docs-nav-link">Foods Database</a>
+                        </li>
+                        <li class="docs-nav-item">
+                            <a href="/docs/features/weight-tracking.html" class="docs-nav-link">Weight Tracking</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="docs-nav-section">
+                    <div class="docs-nav-title">How-to Guides</div>
+                    <ul class="docs-nav-items">
+                        <li class="docs-nav-item">
+                            <a href="/docs/guides/adding-meals.html" class="docs-nav-link">Adding Meals</a>
+                        </li>
+                        <li class="docs-nav-item">
+                            <a href="/docs/guides/tracking-weight.html" class="docs-nav-link">Tracking Weight</a>
+                        </li>
+                        <li class="docs-nav-item">
+                            <a href="/docs/guides/reading-reports.html" class="docs-nav-link">Reading Reports</a>
+                        </li>
+                        <li class="docs-nav-item">
+                            <a href="/docs/guides/managing-foods.html" class="docs-nav-link active">Managing Foods</a>
+                        </li>
+                        <li class="docs-nav-item">
+                            <a href="/docs/guides/copying-meals.html" class="docs-nav-link">Copying Meals</a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="docs-content">
+            <h1>Managing Your Foods Database</h1>
+            
+            <p>The Foods Database is your personal collection of food items with their nutritional information. This guide will show you how to add, edit, and organize your foods for accurate meal tracking.</p>
+
+            <h2>Accessing the Foods Database</h2>
+            <p>Navigate to the Foods page by clicking "Foods" in the main navigation menu. Here you'll see all available food items, including both system defaults and your personal additions.</p>
+
+            <h2>Understanding Food Categories</h2>
+
+            <h3>System Foods vs. Personal Foods</h3>
+            <ul>
+                <li><strong>System Foods:</strong> Pre-loaded common foods with verified nutritional data</li>
+                <li><strong>Personal Foods:</strong> Foods you've added yourself for your specific needs</li>
+                <li><strong>Favorites:</strong> Foods you use frequently, marked for quick access</li>
+            </ul>
+
+            <h3>Food Categories</h3>
+            <p>Foods are organized into categories for easier browsing:</p>
+            <ul>
+                <li>Fruits & Vegetables</li>
+                <li>Grains & Cereals</li>
+                <li>Proteins & Meats</li>
+                <li>Dairy & Eggs</li>
+                <li>Fats & Oils</li>
+                <li>Beverages</li>
+                <li>Snacks & Sweets</li>
+                <li>Prepared Foods</li>
+            </ul>
+
+            <h2>Adding New Foods</h2>
+
+            <h3>Creating a New Food Entry</h3>
+            <ol>
+                <li>Click the "Add New Food" button on the Foods page</li>
+                <li>Fill in the required information:
+                    <ul>
+                        <li><strong>Food Name:</strong> Clear, descriptive name</li>
+                        <li><strong>Category:</strong> Select appropriate category</li>
+                        <li><strong>Serving Size:</strong> Standard serving amount</li>
+                        <li><strong>Unit:</strong> Measurement unit (grams, cups, pieces, etc.)</li>
+                    </ul>
+                </li>
+                <li>Enter nutritional information per serving:
+                    <ul>
+                        <li>Calories</li>
+                        <li>Protein (grams)</li>
+                        <li>Carbohydrates (grams)</li>
+                        <li>Fat (grams)</li>
+                        <li>Fiber (grams) - optional</li>
+                        <li>Sugar (grams) - optional</li>
+                        <li>Sodium (mg) - optional</li>
+                    </ul>
+                </li>
+                <li>Add any notes or preparation details</li>
+                <li>Click "Save" to add the food to your database</li>
+            </ol>
+
+            <h3>Finding Nutritional Information</h3>
+            <p>When adding new foods, you can find nutritional data from:</p>
+            <ul>
+                <li><strong>Food labels:</strong> Most accurate for packaged foods</li>
+                <li><strong>USDA database:</strong> Reliable data for whole foods</li>
+                <li><strong>Manufacturer websites:</strong> Official nutritional information</li>
+                <li><strong>Nutrition apps:</strong> Cross-reference with other tracking apps</li>
+            </ul>
+
+            <h2>Editing Existing Foods</h2>
+
+            <h3>Modifying Food Information</h3>
+            <p>To edit a food item:</p>
+            <ol>
+                <li>Find the food in your database using search or browsing</li>
+                <li>Click the edit icon next to the food name</li>
+                <li>Update any information that needs correction</li>
+                <li>Save your changes</li>
+            </ol>
+
+            <h3>When to Edit Foods</h3>
+            <ul>
+                <li><strong>Incorrect nutritional data:</strong> Fix errors you discover</li>
+                <li><strong>Better serving sizes:</strong> Adjust to match how you typically eat the food</li>
+                <li><strong>More specific names:</strong> Make food names clearer and more descriptive</li>
+                <li><strong>Category changes:</strong> Move foods to more appropriate categories</li>
+            </ul>
+
+            <h2>Organizing Your Foods</h2>
+
+            <h3>Using Favorites</h3>
+            <p>Mark frequently used foods as favorites:</p>
+            <ol>
+                <li>Find the food you want to favorite</li>
+                <li>Click the star icon next to the food name</li>
+                <li>Favorited foods will appear at the top of search results</li>
+                <li>Access all favorites through the "Favorites" filter</li>
+            </ol>
+
+            <h3>Creating Custom Categories</h3>
+            <p>For better organization, you can create custom categories:</p>
+            <ul>
+                <li><strong>Meal-specific:</strong> "Breakfast items," "Lunch options"</li>
+                <li><strong>Diet-specific:</strong> "Keto foods," "Vegan options"</li>
+                <li><strong>Preparation-based:</strong> "Quick meals," "Batch cooking"</li>
+                <li><strong>Brand-specific:</strong> "Trader Joe's," "Homemade"</li>
+            </ul>
+
+            <h2>Advanced Food Management</h2>
+
+            <h3>Creating Recipe Foods</h3>
+            <p>For complex dishes, create recipe-based food entries:</p>
+            <ol>
+                <li>Calculate total nutritional content of all ingredients</li>
+                <li>Determine total servings the recipe makes</li>
+                <li>Divide nutritional totals by number of servings</li>
+                <li>Create a new food entry with the per-serving values</li>
+                <li>Name it clearly (e.g., "Mom's Chicken Casserole - 1 serving")</li>
+            </ol>
+
+            <h3>Managing Multiple Serving Sizes</h3>
+            <p>For foods you eat in different quantities, consider:</p>
+            <ul>
+                <li>Creating separate entries for different serving sizes</li>
+                <li>Using the most common serving size as the base</li>
+                <li>Adding notes about alternative serving calculations</li>
+                <li>Using decimal quantities when logging meals</li>
+            </ul>
+
+            <h2>Searching and Filtering</h2>
+
+            <h3>Effective Search Techniques</h3>
+            <ul>
+                <li><strong>Use specific terms:</strong> "grilled chicken breast" vs. "chicken"</li>
+                <li><strong>Try brand names:</strong> Include specific product brands</li>
+                <li><strong>Search by category:</strong> Filter by food type first</li>
+                <li><strong>Use partial matches:</strong> The search finds partial word matches</li>
+            </ul>
+
+            <h3>Filter Options</h3>
+            <p>Use filters to narrow down your food list:</p>
+            <ul>
+                <li><strong>Category filter:</strong> Show only foods from specific categories</li>
+                <li><strong>Personal vs. System:</strong> Filter by food source</li>
+                <li><strong>Favorites only:</strong> Show only your starred foods</li>
+                <li><strong>Recently used:</strong> Foods you've logged recently</li>
+            </ul>
+
+            <h2>Data Quality and Accuracy</h2>
+
+            <h3>Verifying Nutritional Information</h3>
+            <p>To ensure accuracy:</p>
+            <ul>
+                <li>Cross-reference nutritional data with multiple sources</li>
+                <li>Check that calories match macronutrient calculations</li>
+                <li>Verify serving sizes match your typical portions</li>
+                <li>Update information when you find more accurate data</li>
+            </ul>
+
+            <h3>Common Data Entry Mistakes</h3>
+            <ul>
+                <li><strong>Wrong serving sizes:</strong> Mixing up per 100g vs. per serving</li>
+                <li><strong>Unit confusion:</strong> Grams vs. ounces, cups vs. milliliters</li>
+                <li><strong>Preparation differences:</strong> Raw vs. cooked weights</li>
+                <li><strong>Missing decimals:</strong> Entering 25 instead of 2.5</li>
+            </ul>
+
+            <h2>Importing and Exporting Foods</h2>
+
+            <h3>Bulk Import Options</h3>
+            <p>For adding many foods at once:</p>
+            <ul>
+                <li>Use CSV import templates</li>
+                <li>Import from other nutrition apps</li>
+                <li>Batch create foods from recipes</li>
+            </ul>
+
+            <h3>Backup and Export</h3>
+            <p>Protect your custom food database:</p>
+            <ul>
+                <li>Export your personal foods regularly</li>
+                <li>Keep backups of custom recipes</li>
+                <li>Document special preparation notes</li>
+            </ul>
+
+            <h2>Sharing Foods with Others</h2>
+
+            <h3>Family and Household Sharing</h3>
+            <p>If multiple people use the same account:</p>
+            <ul>
+                <li>Create clear naming conventions</li>
+                <li>Use categories to separate personal preferences</li>
+                <li>Add notes about who created each food</li>
+                <li>Establish guidelines for editing shared foods</li>
+            </ul>
+
+            <h2>Troubleshooting Common Issues</h2>
+
+            <h3>Can't Find a Food</h3>
+            <p>If you can't locate a specific food:</p>
+            <ul>
+                <li>Try different search terms and spellings</li>
+                <li>Check if it's in a different category</li>
+                <li>Look for similar foods you can modify</li>
+                <li>Consider if you need to add it as a new food</li>
+            </ul>
+
+            <h3>Nutritional Data Doesn't Match</h3>
+            <p>If numbers seem wrong:</p>
+            <ul>
+                <li>Verify the serving size matches your expectation</li>
+                <li>Check if the food is raw vs. cooked</li>
+                <li>Compare with official sources</li>
+                <li>Edit the food entry with correct information</li>
+            </ul>
+
+            <h3>Duplicate Foods</h3>
+            <p>To handle duplicate entries:</p>
+            <ul>
+                <li>Choose the most accurate version</li>
+                <li>Delete or hide less accurate duplicates</li>
+                <li>Merge similar foods when possible</li>
+                <li>Use consistent naming to prevent future duplicates</li>
+            </ul>
+
+            <p class="mt-4">
+                <strong>Tip:</strong> A well-maintained foods database makes meal logging faster and more accurate. Invest time in setting it up properly, and it will save you time in the long run.
+            </p>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/components/navbar.js"></script>
+</body>
+</html>

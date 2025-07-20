@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const { requireAuth } = require('../middleware/auth');
+const { authenticateToken } = require('../middleware/auth');
 const settingsService = require('../database/settingsService');
 const userService = require('../database/userService');
 
 // Get user settings - user-specific with authentication
-router.get('/', requireAuth, async (req, res) => {
+router.get('/', authenticateToken, async (req, res) => {
     console.log('Handling GET request for /api/settings');
     try {
         const userId = req.user.id;
@@ -22,7 +22,7 @@ router.get('/', requireAuth, async (req, res) => {
 });
 
 // Update user settings - user-specific with authentication
-router.post('/', requireAuth, async (req, res) => {
+router.post('/', authenticateToken, async (req, res) => {
     console.log('Handling POST request for /api/settings');
     try {
         const userId = req.user.id;

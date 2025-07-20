@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', function () {
         button.addEventListener('click', () => {
             const dayIndex = parseInt(button.dataset.day);
             currentDate = getDateForDayOfWeek(dayIndex);
+            window.currentDate = currentDate; // Update global reference
             updateActiveDayButton(dayIndex);
             loadMeals();
         });
@@ -17,12 +18,14 @@ document.addEventListener('DOMContentLoaded', function () {
     // Add event listeners for date navigation
     document.getElementById('prevDay').addEventListener('click', () => {
         currentDate.setDate(currentDate.getDate() - 1);
+        window.currentDate = currentDate; // Update global reference
         updateActiveDayButton(currentDate.getDay());
         loadMeals();
     });
 
     document.getElementById('nextDay').addEventListener('click', () => {
         currentDate.setDate(currentDate.getDate() + 1);
+        window.currentDate = currentDate; // Update global reference
         updateActiveDayButton(currentDate.getDay());
         loadMeals();
     });

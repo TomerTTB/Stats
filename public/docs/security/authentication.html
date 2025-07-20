@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authentication - Food Diary Security</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="/css/components/navbar.css">
+    <link rel="stylesheet" href="/css/pages/docs.css">
+</head>
+<body>
+    <!-- Navigation will be loaded dynamically -->
+    
+    <div class="docs-container">
+        <!-- Left Navigation Menu -->
+        <aside class="docs-sidebar">
+            <nav class="docs-nav">
+                <div class="docs-nav-section">
+                    <div class="docs-nav-title">Getting Started</div>
+                    <ul class="docs-nav-items">
+                        <li class="docs-nav-item">
+                            <a href="/docs/index.html" class="docs-nav-link">Introduction</a>
+                        </li>
+                        <li class="docs-nav-item">
+                            <a href="/docs/getting-started/quick-start.html" class="docs-nav-link">Quick Start</a>
+                        </li>
+                        <li class="docs-nav-item">
+                            <a href="/docs/getting-started/setup.html" class="docs-nav-link">Account Setup</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="docs-nav-section">
+                    <div class="docs-nav-title">Features</div>
+                    <ul class="docs-nav-items">
+                        <li class="docs-nav-item">
+                            <a href="/docs/features/food-diary.html" class="docs-nav-link">Food Diary</a>
+                        </li>
+                        <li class="docs-nav-item">
+                            <a href="/docs/features/reports.html" class="docs-nav-link">Reports</a>
+                        </li>
+                        <li class="docs-nav-item">
+                            <a href="/docs/features/foods-db.html" class="docs-nav-link">Foods Database</a>
+                        </li>
+                        <li class="docs-nav-item">
+                            <a href="/docs/features/weight-tracking.html" class="docs-nav-link">Weight Tracking</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="docs-nav-section">
+                    <div class="docs-nav-title">How-to Guides</div>
+                    <ul class="docs-nav-items">
+                        <li class="docs-nav-item">
+                            <a href="/docs/guides/adding-meals.html" class="docs-nav-link">Adding Meals</a>
+                        </li>
+                        <li class="docs-nav-item">
+                            <a href="/docs/guides/tracking-weight.html" class="docs-nav-link">Tracking Weight</a>
+                        </li>
+                        <li class="docs-nav-item">
+                            <a href="/docs/guides/reading-reports.html" class="docs-nav-link">Reading Reports</a>
+                        </li>
+                        <li class="docs-nav-item">
+                            <a href="/docs/guides/managing-foods.html" class="docs-nav-link">Managing Foods</a>
+                        </li>
+                        <li class="docs-nav-item">
+                            <a href="/docs/guides/copying-meals.html" class="docs-nav-link">Copying Meals</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="docs-nav-section">
+                    <div class="docs-nav-title">Security</div>
+                    <ul class="docs-nav-items">
+                        <li class="docs-nav-item">
+                            <a href="/docs/security/index.html" class="docs-nav-link">Security Overview</a>
+                        </li>
+                        <li class="docs-nav-item">
+                            <a href="/docs/security/authentication.html" class="docs-nav-link active">Authentication</a>
+                        </li>
+                        <li class="docs-nav-item">
+                            <a href="/docs/security/data-protection.html" class="docs-nav-link">Data Protection</a>
+                        </li>
+                        <li class="docs-nav-item">
+                            <a href="/docs/security/best-practices.html" class="docs-nav-link">Best Practices</a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="docs-content">
+            <h1>Authentication System</h1>
+            
+            <p>Food Diary uses a modern JWT-based authentication system that provides secure, stateless user authentication without the complexity of traditional session management.</p>
+
+            <h2>JWT (JSON Web Token) Authentication</h2>
+
+            <h3>Why JWT?</h3>
+            <p>We chose JWT authentication for several key advantages:</p>
+            <ul>
+                <li><strong>Stateless</strong> - No server-side session storage required</li>
+                <li><strong>Scalable</strong> - Works across multiple servers</li>
+                <li><strong>Secure</strong> - Cryptographically signed tokens</li>
+                <li><strong>Self-contained</strong> - All necessary information in the token</li>
+                <li><strong>Cross-platform</strong> - Works with web, mobile, and API clients</li>
+            </ul>
+
+            <h3>Token Structure</h3>
+            <p>JWT tokens consist of three parts separated by dots:</p>
+            <pre><code>header.payload.signature</code></pre>
+
+            <h4>Header</h4>
+            <p>Contains the token type and signing algorithm:</p>
+            <pre><code>{
+  "alg": "HS256",
+  "typ": "JWT"
+}</code></pre>
+
+            <h4>Payload</h4>
+            <p>Contains user information and token metadata:</p>
+            <pre><code>{
+  "id": "user_123456789",
+  "email": "user@example.com",
+  "name": "John Doe",
+  "iat": 1640995200,
+  "exp": 1641081600,
+  "iss": "food-diary-app"
+}</code></pre>
+
+            <h4>Signature</h4>
+            <p>Ensures token integrity and authenticity using a secret key.</p>
+
+            <h2>Authentication Flow</h2>
+
+            <h3>User Registration</h3>
+            <ol>
+                <li><strong>Input Validation</strong>
+                    <ul>
+                        <li>Email format validation</li>
+                        <li>Password strength requirements</li>
+                        <li>Name length validation</li>
+                        <li>Input sanitization</li>
+                    </ul>
+                </li>
+                <li><strong>Uniqueness Check</strong>
+                    <ul>
+                        <li>Verify email doesn't already exist</li>
+                        <li>Case-insensitive email comparison</li>
+                    </ul>
+                </li>
+                <li><strong>Password Security</strong>
+                    <ul>
+                        <li>Hash password with bcrypt</li>
+                        <li>Use 12 salt rounds for security</li>
+                        <li>Never store plain text passwords</li>
+                    </ul>
+                </li>
+                <li><strong>Account Creation</strong>
+                    <ul>
+                        <li>Generate unique user ID</li>
+                        <li>Store user in database</li>
+                        <li>Create initial user settings</li>
+                    </ul>
+                </li>
+                <li><strong>Token Generation</strong>
+                    <ul>
+                        <li>Generate access token (24h)</li>
+                        <li>Generate refresh token (7d)</li>
+                        <li>Return tokens to client</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <h3>User Login</h3>
+            <ol>
+                <li><strong>Rate Limiting Check</strong>
+                    <ul>
+                        <li>Check failed attempt count</li>
+                        <li>Enforce lockout if exceeded</li>
+                        <li>Track attempts by email</li>
+                    </ul>
+                </li>
+                <li><strong>User Lookup</strong>
+                    <ul>
+                        <li>Find user by email</li>
+                        <li>Case-insensitive search</li>
+                    </ul>
+                </li>
+                <li><strong>Password Verification</strong>
+                    <ul>
+                        <li>Compare with bcrypt</li>
+                        <li>Record failed attempts</li>
+                        <li>Clear attempts on success</li>
+                    </ul>
+                </li>
+                <li><strong>Token Generation</strong>
+                    <ul>
+                        <li>Create new access token</li>
+                        <li>Create new refresh token</li>
+                        <li>Return user info and tokens</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <h3>API Request Authentication</h3>
+            <ol>
+                <li><strong>Token Extraction</strong>
+                    <ul>
+                        <li>Get Authorization header</li>
+                        <li>Extract Bearer token</li>
+                        <li>Validate token format</li>
+                    </ul>
+                </li>
+                <li><strong>Token Verification</strong>
+                    <ul>
+                        <li>Verify JWT signature</li>
+                        <li>Check token expiration</li>
+                        <li>Validate token issuer</li>
+                    </ul>
+                </li>
+                <li><strong>User Validation</strong>
+                    <ul>
+                        <li>Extract user ID from token</li>
+                        <li>Verify user exists in database</li>
+                        <li>Check user account status</li>
+                    </ul>
+                </li>
+                <li><strong>Request Authorization</strong>
+                    <ul>
+                        <li>Add user context to request</li>
+                        <li>Proceed with API operation</li>
+                        <li>Ensure user data isolation</li>
+                    </ul>
+                </li>
+            </ol>
+
+            <h2>Password Security</h2>
+
+            <h3>Password Requirements</h3>
+            <p>Strong passwords are enforced with the following requirements:</p>
+            <ul>
+                <li><strong>Minimum Length</strong> - At least 8 characters</li>
+                <li><strong>Maximum Length</strong> - No more than 128 characters</li>
+                <li><strong>Lowercase Letter</strong> - At least one (a-z)</li>
+                <li><strong>Uppercase Letter</strong> - At least one (A-Z)</li>
+                <li><strong>Number</strong> - At least one digit (0-9)</li>
+                <li><strong>Special Character</strong> - At least one symbol</li>
+                <li><strong>Common Password Check</strong> - Reject common weak passwords</li>
+            </ul>
+
+            <h3>Password Hashing</h3>
+            <p>We use bcrypt for secure password hashing:</p>
+            <ul>
+                <li><strong>Salt Rounds</strong> - 12 rounds for high security</li>
+                <li><strong>Unique Salt</strong> - Each password gets a unique salt</li>
+                <li><strong>One-Way Function</strong> - Passwords cannot be decrypted</li>
+                <li><strong>Time-Tested</strong> - Industry standard algorithm</li>
+            </ul>
+
+            <h2>Rate Limiting</h2>
+
+            <h3>Login Attempt Protection</h3>
+            <p>To prevent brute force attacks, we implement rate limiting:</p>
+            <ul>
+                <li><strong>Maximum Attempts</strong> - 5 failed attempts per email</li>
+                <li><strong>Lockout Duration</strong> - 15 minutes after max attempts</li>
+                <li><strong>Attempt Tracking</strong> - In-memory tracking by email</li>
+                <li><strong>Automatic Reset</strong> - Attempts reset after lockout period</li>
+                <li><strong>Success Reset</strong> - Successful login clears attempts</li>
+            </ul>
+
+            <h3>Rate Limiting Logic</h3>
+            <pre><code>// Check rate limit before authentication
+if (attempts >= MAX_ATTEMPTS) {
+    if (timeSinceFirst < LOCKOUT_TIME) {
+        throw new Error('Too many attempts, try again later');
+    } else {
+        // Reset attempts after lockout period
+        clearAttempts(email);
+    }
+}
+
+// Record failed attempt
+if (authenticationFailed) {
+    recordFailedAttempt(email);
+}
+
+// Clear attempts on success
+if (authenticationSuccessful) {
+    clearFailedAttempts(email);
+}</code></pre>
+
+            <h2>Token Management</h2>
+
+            <h3>Access Tokens</h3>
+            <ul>
+                <li><strong>Purpose</strong> - Authorize API requests</li>
+                <li><strong>Lifetime</strong> - 24 hours (configurable)</li>
+                <li><strong>Storage</strong> - Client-side (localStorage/memory)</li>
+                <li><strong>Usage</strong> - Included in Authorization header</li>
+            </ul>
+
+            <h3>Refresh Tokens</h3>
+            <ul>
+                <li><strong>Purpose</strong> - Renew expired access tokens</li>
+                <li><strong>Lifetime</strong> - 7 days (configurable)</li>
+                <li><strong>Security</strong> - Separate secret key</li>
+                <li><strong>Usage</strong> - Exchange for new access token</li>
+            </ul>
+
+            <h3>Token Refresh Flow</h3>
+            <ol>
+                <li>Access token expires during API request</li>
+                <li>Client receives 403 Forbidden response</li>
+                <li>Client sends refresh token to /api/auth/refresh</li>
+                <li>Server validates refresh token</li>
+                <li>Server generates new access token</li>
+                <li>Client retries original request with new token</li>
+            </ol>
+
+            <h2>Security Headers</h2>
+
+            <h3>Authorization Header Format</h3>
+            <pre><code>Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...</code></pre>
+
+            <h3>Token Validation</h3>
+            <p>Every protected API request validates the token:</p>
+            <pre><code>// Extract token from header
+const authHeader = req.headers['authorization'];
+const token = authHeader && authHeader.split(' ')[1];
+
+// Verify token signature and expiration
+const decoded = jwt.verify(token, JWT_SECRET);
+
+// Validate user exists in database
+const user = await userService.getUserById(decoded.id);
+
+// Add user context to request
+req.user = user;</code></pre>
+
+            <h2>Logout and Session Management</h2>
+
+            <h3>Client-Side Logout</h3>
+            <p>Since JWT is stateless, logout is primarily client-side:</p>
+            <ul>
+                <li>Remove tokens from client storage</li>
+                <li>Clear user context from application</li>
+                <li>Redirect to login page</li>
+                <li>Notify server of logout (optional)</li>
+            </ul>
+
+            <h3>Server-Side Logout</h3>
+            <p>For enhanced security, server can track logout:</p>
+            <ul>
+                <li>Log logout events for monitoring</li>
+                <li>Implement token blacklisting (advanced)</li>
+                <li>Force token refresh on security events</li>
+            </ul>
+
+            <h2>Error Handling</h2>
+
+            <h3>Authentication Errors</h3>
+            <p>Clear error codes help clients handle authentication issues:</p>
+            <ul>
+                <li><strong>NO_TOKEN</strong> - Authorization header missing</li>
+                <li><strong>INVALID_TOKEN</strong> - Token format or signature invalid</li>
+                <li><strong>TOKEN_EXPIRED</strong> - Token has expired</li>
+                <li><strong>USER_NOT_FOUND</strong> - Token valid but user doesn't exist</li>
+                <li><strong>AUTH_ERROR</strong> - General authentication error</li>
+            </ul>
+
+            <h3>Error Response Format</h3>
+            <pre><code>{
+  "error": "Token expired",
+  "code": "TOKEN_EXPIRED"
+}</code></pre>
+
+            <h2>Security Best Practices</h2>
+
+            <h3>Token Security</h3>
+            <ul>
+                <li>Use strong, unique JWT secrets</li>
+                <li>Rotate secrets regularly</li>
+                <li>Keep tokens short-lived</li>
+                <li>Use HTTPS in production</li>
+                <li>Store tokens securely on client</li>
+            </ul>
+
+            <h3>Password Security</h3>
+            <ul>
+                <li>Enforce strong password requirements</li>
+                <li>Use high bcrypt salt rounds</li>
+                <li>Never log or transmit passwords</li>
+                <li>Implement password change functionality</li>
+                <li>Consider password history</li>
+            </ul>
+
+            <p class="mt-4">
+                <strong>Next:</strong> Learn about <a href="/docs/security/data-protection.html">data protection measures</a> or <a href="/docs/security/best-practices.html">security best practices</a>.
+            </p>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/components/navbar.js"></script>
+</body>
+</html>

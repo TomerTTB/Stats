@@ -1,10 +1,14 @@
 // Global variables
 let currentDate = new Date();
+window.currentDate = currentDate; // Make it accessible globally
 let mealInterval = 3; // Default interval, will be updated from settings
 let userWeight = 70; // Default weight, will be updated from settings
 let goalCalories = 0; // Will be updated from settings
 let isMetricSystem = true; // Will be updated from settings
 let baseGoalCalories = 0; // Store the base goal calories before adjustment
+
+// Add debounce tracking for saves
+const saveDebounceMap = new Map();
 
 // Goal percentage thresholds for color coding
 const GOAL_GREEN_THRESHOLD = 5; // Within 5% shows green
@@ -150,25 +154,40 @@ async function loadMeals() {
         const mealsContainer = document.getElementById('mealsContainer');
         mealsContainer.innerHTML = ''; // Clear existing content
 
+        // Ensure we always have all 6 meals with default data
+        const defaultTimes = ["08:00", "11:00", "14:00", "17:00", "20:00", "23:00"];
+        const allMeals = [];
+        
+        for (let i = 0; i < 6; i++) {
+            // Use existing meal data if available, otherwise create default meal
+            const existingMeal = data.meals && data.meals.find(m => m.id === i + 1);
+            const meal = existingMeal || {
+                id: i + 1,
+                time: defaultTimes[i],
+                items: []
+            };
+            allMeals.push(meal);
+        }
+
         // Create row 1: meals 1 and 4
         const row1 = document.createElement('div');
         row1.className = 'meals-row';
-        if (data.meals[0]) row1.appendChild(createMealSection(data.meals[0])); // Meal 1
-        if (data.meals[3]) row1.appendChild(createMealSection(data.meals[3])); // Meal 4
+        row1.appendChild(createMealSection(allMeals[0])); // Meal 1
+        row1.appendChild(createMealSection(allMeals[3])); // Meal 4
         mealsContainer.appendChild(row1);
 
         // Create row 2: meals 2 and 5
         const row2 = document.createElement('div');
         row2.className = 'meals-row';
-        if (data.meals[1]) row2.appendChild(createMealSection(data.meals[1])); // Meal 2
-        if (data.meals[4]) row2.appendChild(createMealSection(data.meals[4])); // Meal 5
+        row2.appendChild(createMealSection(allMeals[1])); // Meal 2
+        row2.appendChild(createMealSection(allMeals[4])); // Meal 5
         mealsContainer.appendChild(row2);
 
         // Create row 3: meals 3 and 6
         const row3 = document.createElement('div');
         row3.className = 'meals-row';
-        if (data.meals[2]) row3.appendChild(createMealSection(data.meals[2])); // Meal 3
-        if (data.meals[5]) row3.appendChild(createMealSection(data.meals[5])); // Meal 6
+        row3.appendChild(createMealSection(allMeals[2])); // Meal 3
+        row3.appendChild(createMealSection(allMeals[5])); // Meal 6
         mealsContainer.appendChild(row3);
 
     } catch (error) {
@@ -219,18 +238,30 @@ async function updateAllMealTimes(firstMealTime) {
                 await saveMealTime(mealId, formattedTime);
             }
         }
-    } catch (error) {
-        console.error('Error updating meal times:', error);
-        showError('Failed to update meal times');
-        loadMeals(); // Reload to show previous state
-    }
+            } catch (error) {
+            console.error('Error updating meal times:', error);
+            showError('Failed to update meal times');
+            loadMeals(); // Reload to show previous state
+        }
+        
+        // Clean up any duplicate placeholders after updating all meal times
+        try {
+            const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+            const dayName = days[currentDate.getDay()];
+            await API.meals.cleanupPlaceholders(dayName);
+        } catch (error) {
+            console.error('Error cleaning up placeholders:', error);
+            // Don't show error to user, this is just cleanup
+        }
 }
 
 async function saveMealTime(mealId, newTime) {
     try {
         const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
         const dayName = days[currentDate.getDay()];
+        console.log(`💾 Saving meal ${mealId} time to ${newTime} for ${dayName}`);
         await API.meals.updateMealTime(dayName, mealId, newTime);
+        console.log(`✅ Meal ${mealId} time saved successfully`);
     } catch (error) {
         console.error('Error saving meal time:', error);
         showError('Failed to save meal time');
@@ -246,8 +277,31 @@ async function saveMealData(row) {
         const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
         const dayName = days[currentDate.getDay()];
 
-        // Get all values from the row
+        // Create unique key for this row to prevent duplicate saves
         const nameInput = row.querySelector('.food-search-input');
+        const rowKey = `${dayName}-${mealId}-${nameInput?.value?.trim() || 'empty'}`;
+        
+        // Check if we're already saving this row recently (within 1 second)
+        const now = Date.now();
+        const lastSave = saveDebounceMap.get(rowKey);
+        if (lastSave && (now - lastSave) < 1000) {
+            console.log(`⏭️ Skipping duplicate save for "${nameInput?.value}" (too recent)`);
+            return;
+        }
+        
+        // Record this save attempt
+        saveDebounceMap.set(rowKey, now);
+        
+        // Clean up old entries (older than 5 minutes) to prevent memory leaks
+        if (Math.random() < 0.1) { // Only do this 10% of the time to avoid performance impact
+            for (const [key, timestamp] of saveDebounceMap.entries()) {
+                if (now - timestamp > 300000) { // 5 minutes
+                    saveDebounceMap.delete(key);
+                }
+            }
+        }
+
+        // Get all values from the row
         const amountInput = row.querySelector('input[type="number"]');
         const nutritionalDivs = row.querySelectorAll('.nutritional-value');
 
@@ -307,8 +361,14 @@ async function saveMealData(row) {
             const response = await API.meals.updateItem(dayName, mealId, itemId, itemData);
             savedItem = await response.json();
         } else {
-            // Create new item
-            const response = await API.meals.addItem(dayName, mealId, itemData);
+            // Create new item - get the current meal time
+            const timeInput = mealSection.querySelector('.meal-time');
+            const mealTime = timeInput ? timeInput.value : '08:00'; // fallback to default
+            
+            // Add meal time to itemData so the backend can use it
+            const itemDataWithTime = { ...itemData, mealTime };
+            
+            const response = await API.meals.addItem(dayName, mealId, itemDataWithTime);
             savedItem = await response.json();
         }
         

@@ -136,26 +136,59 @@ function createMealSection(meal) {
 
     // Create time input group
     const timeGroup = document.createElement('div');
-    timeGroup.className = 'd-flex align-items-center';
-    timeGroup.innerHTML = `
+    timeGroup.className = 'd-flex align-items-center justify-content-between w-100';
+    
+    // Left side: meal title and time
+    const leftGroup = document.createElement('div');
+    leftGroup.className = 'd-flex align-items-center';
+    leftGroup.innerHTML = `
         <h3 class="me-2 mb-0">Meal ${meal.id}</h3>
         <input type="text" 
                class="form-control form-control-sm meal-time" 
-               style="width: 120px;" 
+               style="width: 120px; ${meal.id > 1 ? 'border-color: #28a745;' : ''}" 
                value="${meal.time}"
                placeholder="HH:MM"
                maxlength="5"
-               data-meal-id="${meal.id}">
+               data-meal-id="${meal.id}"
+               title="${meal.id === 1 ? 'Change this time to update all meals' : 'Change this meal time independently'}">
+        ${meal.id > 1 ? '<i class="bi bi-pencil-square text-success ms-1" style="font-size: 0.8em;" title="Independent time"></i>' : ''}
     `;
-
+    
+    // Right side: copy/paste buttons
+    const rightGroup = document.createElement('div');
+    rightGroup.className = 'd-flex align-items-center gap-2';
+    rightGroup.innerHTML = `
+        <button type="button" 
+                class="btn btn-outline-primary btn-sm copy-meal-btn" 
+                data-meal-id="${meal.id}"
+                title="Copy this meal">
+            <i class="bi bi-copy"></i> Copy
+        </button>
+        <button type="button" 
+                class="btn btn-outline-success btn-sm paste-meal-btn" 
+                data-meal-id="${meal.id}"
+                title="Paste copied meal here"
+                disabled>
+            <i class="bi bi-clipboard"></i> Paste
+        </button>
+    `;
+    
+    timeGroup.appendChild(leftGroup);
+    timeGroup.appendChild(rightGroup);
     header.appendChild(timeGroup);
     section.appendChild(header);
 
-    // Add event listener for meal time input if this is meal 1
+    // Add event listener for meal time input
+    const timeInput = timeGroup.querySelector('.meal-time');
     if (meal.id === 1) {
-        const timeInput = timeGroup.querySelector('.meal-time');
+        // For meal 1, update all other meals based on interval
         timeInput.addEventListener('change', function () {
             updateAllMealTimes(this.value);
+        });
+    } else {
+        // For meals 2-6, update only this meal's time
+        timeInput.addEventListener('change', function () {
+            saveMealTime(meal.id, this.value);
         });
     }
 

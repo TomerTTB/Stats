@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { requireAuth } = require('../middleware/auth');
+const { authenticateToken } = require('../middleware/auth');
 const foodService = require('../database/foodService');
 
 // Debug logging
@@ -10,7 +10,7 @@ router.use((req, res, next) => {
 });
 
 // Get all foods - requires authentication, shared database
-router.get('/', requireAuth, async (req, res) => {
+router.get('/', authenticateToken, async (req, res) => {
     console.log('Handling GET request for /api/foods');
     try {
         const { search } = req.query;
@@ -33,7 +33,7 @@ router.get('/', requireAuth, async (req, res) => {
 });
 
 // Search foods endpoint (alternative to query parameter)
-router.get('/search', requireAuth, async (req, res) => {
+router.get('/search', authenticateToken, async (req, res) => {
     console.log('Handling GET request for /api/foods/search');
     try {
         const { q } = req.query;
@@ -47,7 +47,7 @@ router.get('/search', requireAuth, async (req, res) => {
 });
 
 // Add new food - requires authentication, shared database
-router.post('/', requireAuth, async (req, res) => {
+router.post('/', authenticateToken, async (req, res) => {
     console.log('Handling POST request for /api/foods');
     try {
         const success = await foodService.addFood(req.body);
@@ -63,7 +63,7 @@ router.post('/', requireAuth, async (req, res) => {
 });
 
 // Update food - requires authentication, shared database
-router.put('/:index', requireAuth, async (req, res) => {
+router.put('/:index', authenticateToken, async (req, res) => {
     console.log('Handling PUT request for /api/foods/:index');
     try {
         const index = parseInt(req.params.index);
@@ -90,7 +90,7 @@ router.put('/:index', requireAuth, async (req, res) => {
 });
 
 // Delete food - requires authentication, shared database
-router.delete('/:index', requireAuth, async (req, res) => {
+router.delete('/:index', authenticateToken, async (req, res) => {
     console.log('Handling DELETE request for /api/foods/:index');
     try {
         const index = parseInt(req.params.index);

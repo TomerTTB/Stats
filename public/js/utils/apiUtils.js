@@ -1,7 +1,7 @@
 // API utility functions for handling authentication and errors
 
 /**
- * Enhanced fetch wrapper with authentication error handling
+ * Enhanced fetch wrapper with JWT authentication
  * @param {string} url - The API endpoint URL
  * @param {object} options - Fetch options (method, headers, body, etc.)
  * @param {boolean} showErrorMessages - Whether to show error messages to user (default: true)
@@ -10,16 +10,37 @@
  */
 async function authenticatedFetch(url, options = {}, showErrorMessages = true, isAuthCheck = false) {
     try {
+        // Get JWT token from localStorage
+        const token = localStorage.getItem('authToken');
+
+        // Prepare headers with JWT token
+        const headers = {
+            'Content-Type': 'application/json',
+            ...options.headers
+        };
+
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
+        }
+
         const response = await fetch(url, {
-            credentials: 'include', // Include cookies for session authentication
-            ...options
+            ...options,
+            headers
         });
 
         // Handle authentication errors
-        if (response.status === 401) {
-            // Only trigger authentication error handling if we're not on a public page
-            if (!isPublicPage() && !isAuthCheck) {
-                handleAuthenticationError();
+        if (response.status === 401 || response.status === 403) {
+            console.log('Authentication failed for:', url);
+
+            // Clear invalid token
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('user');
+
+            // Only trigger redirect if we're not on a public page and not already redirecting
+            if (!isPublicPage() && !isAuthCheck && !window.isRedirecting) {
+                console.log('Authentication error, will redirect to login');
+                // Don't redirect immediately to prevent loops
+                // Let the auth.js handle the redirect
             }
             throw new Error('Authentication required');
         }
@@ -47,21 +68,16 @@ async function authenticatedFetch(url, options = {}, showErrorMessages = true, i
 }
 
 /**
- * Handle authentication errors by redirecting to login
+ * Handle authentication errors (disabled to prevent redirect loops)
  */
 function handleAuthenticationError() {
-    console.log('Authentication error detected, redirecting to login...');
-    
+    console.log('Authentication error detected - handled by auth.js');
+
     // Clear any stored user state
     clearUserState();
-    
-    // Show a brief message before redirect
-    showUserError('Your session has expired. Redirecting to login...', 'warning');
-    
-    // Redirect to login page after a short delay
-    setTimeout(() => {
-        window.location.href = '/login.html';
-    }, 1500);
+
+    // Don't redirect here - let auth.js handle it to prevent loops
+    console.log('Token cleared, auth.js will handle redirect if needed');
 }
 
 /**
@@ -73,7 +89,7 @@ function clearUserState() {
     if (userDisplay) {
         userDisplay.textContent = '';
     }
-    
+
     // Clear any cached data
     localStorage.removeItem('userSettings');
     sessionStorage.clear();
@@ -110,13 +126,13 @@ function isPublicPage() {
  */
 function showUserError(message, type = 'error') {
     console.error(message);
-    
+
     // Try to find an existing error container or create one
     let errorContainer = document.getElementById('error-container');
     if (!errorContainer) {
         errorContainer = createErrorContainer();
     }
-    
+
     // Create error alert
     const alertDiv = document.createElement('div');
     alertDiv.className = `alert alert-${type === 'error' ? 'danger' : 'warning'} alert-dismissible fade show`;
@@ -124,10 +140,10 @@ function showUserError(message, type = 'error') {
         ${message}
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
     `;
-    
+
     // Add to container
     errorContainer.appendChild(alertDiv);
-    
+
     // Auto-remove after 5 seconds
     setTimeout(() => {
         if (alertDiv.parentNode) {
@@ -147,7 +163,7 @@ function createErrorContainer() {
     container.style.right = '20px';
     container.style.zIndex = '9999';
     container.style.maxWidth = '400px';
-    
+
     document.body.appendChild(container);
     return container;
 }
@@ -165,7 +181,7 @@ const API = {
             body: JSON.stringify(data)
         })
     },
-    
+
     // Foods API
     foods: {
         getAll: () => authenticatedFetch('/api/foods'),
@@ -183,7 +199,7 @@ const API = {
             method: 'DELETE'
         })
     },
-    
+
     // Daily meals API
     meals: {
         get: (dayName) => authenticatedFetch(`/api/daily-meals/${dayName}`),
@@ -209,15 +225,21 @@ const API = {
         }),
         deleteItem: (dayName, mealId, itemId) => authenticatedFetch(`/api/daily-meals/${dayName}/meals/${mealId}/items/${itemId}`, {
             method: 'DELETE'
+        }),
+        deleteAllMealItems: (dayName, mealId) => authenticatedFetch(`/api/daily-meals/${dayName}/meals/${mealId}/items`, {
+            method: 'DELETE'
+        }),
+        cleanupPlaceholders: (dayName) => authenticatedFetch(`/api/daily-meals/${dayName}/cleanup-placeholders`, {
+            method: 'POST'
         })
     },
-    
+
     // Auth API
     auth: {
         me: () => authenticatedFetch('/api/auth/me', {}, false, true), // Silent auth check
         logout: () => authenticatedFetch('/api/auth/logout', { method: 'POST' })
     },
-    
+
     // Weight tracking API
     weight: {
         getAll: () => authenticatedFetch('/api/weight'),
@@ -260,16 +282,10 @@ function initializeAuth() {
         console.log('Public page - skipping authentication check');
         return;
     }
-    
-    // Check authentication when page loads
-    checkAuthentication().then(user => {
-        if (!user) {
-            console.log('User not authenticated, redirecting...');
-            // User will be redirected by the error handler
-        } else {
-            console.log('User authenticated:', user.name || user.email);
-        }
-    });
+
+    // Don't automatically check authentication here to prevent redirect loops
+    // Let the auth.js handle authentication checking
+    console.log('Protected page - auth checking handled by auth.js');
 }
 
 // Export functions for use in other files

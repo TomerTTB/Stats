@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Protection - Food Diary Security</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="/css/components/navbar.css">
+    <link rel="stylesheet" href="/css/pages/docs.css">
+</head>
+<body>
+    <!-- Navigation will be loaded dynamically -->
+    
+    <div class="docs-container">
+        <!-- Left Navigation Menu -->
+        <aside class="docs-sidebar">
+            <nav class="docs-nav">
+                <div class="docs-nav-section">
+                    <div class="docs-nav-title">Getting Started</div>
+                    <ul class="docs-nav-items">
+                        <li class="docs-nav-item">
+                            <a href="/docs/index.html" class="docs-nav-link">Introduction</a>
+                        </li>
+                        <li class="docs-nav-item">
+                            <a href="/docs/getting-started/quick-start.html" class="docs-nav-link">Quick Start</a>
+                        </li>
+                        <li class="docs-nav-item">
+                            <a href="/docs/getting-started/setup.html" class="docs-nav-link">Account Setup</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="docs-nav-section">
+                    <div class="docs-nav-title">Features</div>
+                    <ul class="docs-nav-items">
+                        <li class="docs-nav-item">
+                            <a href="/docs/features/food-diary.html" class="docs-nav-link">Food Diary</a>
+                        </li>
+                        <li class="docs-nav-item">
+                            <a href="/docs/features/reports.html" class="docs-nav-link">Reports</a>
+                        </li>
+                        <li class="docs-nav-item">
+                            <a href="/docs/features/foods-db.html" class="docs-nav-link">Foods Database</a>
+                        </li>
+                        <li class="docs-nav-item">
+                            <a href="/docs/features/weight-tracking.html" class="docs-nav-link">Weight Tracking</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="docs-nav-section">
+                    <div class="docs-nav-title">How-to Guides</div>
+                    <ul class="docs-nav-items">
+                        <li class="docs-nav-item">
+                            <a href="/docs/guides/adding-meals.html" class="docs-nav-link">Adding Meals</a>
+                        </li>
+                        <li class="docs-nav-item">
+                            <a href="/docs/guides/tracking-weight.html" class="docs-nav-link">Tracking Weight</a>
+                        </li>
+                        <li class="docs-nav-item">
+                            <a href="/docs/guides/reading-reports.html" class="docs-nav-link">Reading Reports</a>
+                        </li>
+                        <li class="docs-nav-item">
+                            <a href="/docs/guides/managing-foods.html" class="docs-nav-link">Managing Foods</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="docs-nav-section">
+                    <div class="docs-nav-title">Security</div>
+                    <ul class="docs-nav-items">
+                        <li class="docs-nav-item">
+                            <a href="/docs/security/index.html" class="docs-nav-link">Security Overview</a>
+                        </li>
+                        <li class="docs-nav-item">
+                            <a href="/docs/security/authentication.html" class="docs-nav-link">Authentication</a>
+                        </li>
+                        <li class="docs-nav-item">
+                            <a href="/docs/security/data-protection.html" class="docs-nav-link active">Data Protection</a>
+                        </li>
+                        <li class="docs-nav-item">
+                            <a href="/docs/security/best-practices.html" class="docs-nav-link">Best Practices</a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="docs-content">
+            <h1>Data Protection</h1>
+            
+            <p>Your personal health and nutrition data is precious. Food Diary implements comprehensive data protection measures to ensure your information remains private, secure, and under your control.</p>
+
+            <h2>Data Privacy Principles</h2>
+
+            <h3>Data Minimization</h3>
+            <p>We collect only the data necessary for the application to function:</p>
+            <ul>
+                <li><strong>Account Information</strong> - Email, name, and hashed password</li>
+                <li><strong>Nutrition Data</strong> - Food entries and meal tracking</li>
+                <li><strong>Weight Data</strong> - Weight measurements and dates</li>
+                <li><strong>Settings</strong> - User preferences and goals</li>
+                <li><strong>No Tracking</strong> - No analytics, cookies, or behavioral tracking</li>
+            </ul>
+
+            <h3>Purpose Limitation</h3>
+            <p>Your data is used exclusively for:</p>
+            <ul>
+                <li>Providing nutrition and weight tracking functionality</li>
+                <li>Generating personal reports and insights</li>
+                <li>Maintaining your account and preferences</li>
+                <li>Ensuring application security and integrity</li>
+            </ul>
+
+            <div class="alert alert-success">
+                <h4><i class="bi bi-shield-check"></i> Privacy Commitment</h4>
+                <p class="mb-0">Your data is never sold, shared with third parties, or used for advertising. It exists solely to provide you with nutrition tracking services.</p>
+            </div>
+
+            <h2>Data Storage Security</h2>
+
+            <h3>Database Protection</h3>
+            <p>Your data is stored securely in a SQLite database with multiple protection layers:</p>
+            <ul>
+                <li><strong>User Isolation</strong> - Each user's data is completely separated</li>
+                <li><strong>Parameterized Queries</strong> - Protection against SQL injection</li>
+                <li><strong>Access Control</strong> - Database access restricted to application</li>
+                <li><strong>File Permissions</strong> - Proper operating system permissions</li>
+                <li><strong>Backup Security</strong> - Encrypted backups when implemented</li>
+            </ul>
+
+            <h3>Password Protection</h3>
+            <p>Your password receives special protection:</p>
+            <ul>
+                <li><strong>Never Stored Plain Text</strong> - Only bcrypt hashes are stored</li>
+                <li><strong>Unique Salt</strong> - Each password gets a unique salt</li>
+                <li><strong>High Cost Factor</strong> - 12 rounds make brute force impractical</li>
+                <li><strong>No Recovery</strong> - Passwords cannot be decrypted, only reset</li>
+                <li><strong>Secure Transmission</strong> - HTTPS encryption in production</li>
+            </ul>
+
+            <h2>Data Access Control</h2>
+
+            <h3>User-Specific Access</h3>
+            <p>Every data access is verified to ensure users can only see their own information:</p>
+            <pre><code>// Example: Meal data access control
+async function getUserMeals(userId, date) {
+    // JWT token provides authenticated user ID
+    const authenticatedUserId = req.user.id;
+    
+    // Only allow access to own data
+    if (userId !== authenticatedUserId) {
+        throw new Error('Access denied');
+    }
+    
+    // Query only returns data for this user
+    return await mealService.getUserDayMeals(userId, date);
+}</code></pre>
+
+            <h3>API Endpoint Protection</h3>
+            <p>All sensitive endpoints require authentication:</p>
+            <ul>
+                <li><strong>Protected Routes</strong> - JWT token required for data access</li>
+                <li><strong>User Context</strong> - All queries filtered by authenticated user</li>
+                <li><strong>Authorization Checks</strong> - Verify user owns requested data</li>
+                <li><strong>Error Handling</strong> - No data leakage in error messages</li>
+            </ul>
+
+            <h2>Data Transmission Security</h2>
+
+            <h3>HTTPS Encryption</h3>
+            <p>In production environments, all data transmission is encrypted:</p>
+            <ul>
+                <li><strong>TLS/SSL</strong> - Industry standard encryption protocols</li>
+                <li><strong>Certificate Validation</strong> - Verified SSL certificates</li>
+                <li><strong>Secure Headers</strong> - HSTS and security headers</li>
+                <li><strong>No Mixed Content</strong> - All resources served over HTTPS</li>
+            </ul>
+
+            <h3>API Security</h3>
+            <p>API communications are secured through:</p>
+            <ul>
+                <li><strong>JWT Tokens</strong> - Cryptographically signed authentication</li>
+                <li><strong>Bearer Token Format</strong> - Standard authorization header</li>
+                <li><strong>Token Expiration</strong> - Limited lifetime reduces exposure</li>
+                <li><strong>Secure Storage</strong> - Client-side token protection</li>
+            </ul>
+
+            <h2>Data Integrity</h2>
+
+            <h3>Input Validation</h3>
+            <p>All data is validated before storage to ensure integrity:</p>
+            <ul>
+                <li><strong>Type Validation</strong> - Ensure correct data types</li>
+                <li><strong>Range Validation</strong> - Reasonable limits on numeric values</li>
+                <li><strong>Format Validation</strong> - Email formats, date formats, etc.</li>
+                <li><strong>Length Limits</strong> - Prevent oversized data</li>
+                <li><strong>Sanitization</strong> - Remove potentially harmful content</li>
+            </ul>
+
+            <h3>Database Constraints</h3>
+            <p>Database schema enforces data integrity:</p>
+            <pre><code>-- Example: User table constraints
+CREATE TABLE users (
+    id TEXT PRIMARY KEY,
+    email TEXT UNIQUE NOT NULL,
+    name TEXT NOT NULL,
+    password TEXT NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Foreign key constraints ensure referential integrity
+CREATE TABLE user_meals (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id TEXT NOT NULL,
+    -- ... other fields
+    FOREIGN KEY (user_id) REFERENCES users (id)
+);</code></pre>
+
+            <h2>Data Backup and Recovery</h2>
+
+            <h3>Backup Strategy</h3>
+            <p>Protect your data against loss with proper backup procedures:</p>
+            <ul>
+                <li><strong>Regular Backups</strong> - Automated backup scheduling</li>
+                <li><strong>Multiple Copies</strong> - Redundant backup storage</li>
+                <li><strong>Backup Encryption</strong> - Encrypted backup files</li>
+                <li><strong>Recovery Testing</strong> - Regular restore verification</li>
+                <li><strong>Retention Policy</strong> - Appropriate backup retention</li>
+            </ul>
+
+            <h3>Data Export</h3>
+            <p>You maintain control over your data with export capabilities:</p>
+            <ul>
+                <li><strong>Complete Export</strong> - Download all your data</li>
+                <li><strong>Standard Formats</strong> - CSV, JSON formats for portability</li>
+                <li><strong>Selective Export</strong> - Choose specific data ranges</li>
+                <li><strong>No Vendor Lock-in</strong> - Use your data elsewhere</li>
+            </ul>
+
+            <h2>Privacy Controls</h2>
+
+            <h3>Account Management</h3>
+            <p>You have full control over your account and data:</p>
+            <ul>
+                <li><strong>Profile Updates</strong> - Change name and preferences</li>
+                <li><strong>Password Changes</strong> - Update your password anytime</li>
+                <li><strong>Data Deletion</strong> - Delete specific entries</li>
+                <li><strong>Account Deletion</strong> - Complete account and data removal</li>
+            </ul>
+
+            <h3>Data Retention</h3>
+            <p>We keep your data only as long as necessary:</p>
+            <ul>
+                <li><strong>Active Accounts</strong> - Data retained while account is active</li>
+                <li><strong>Account Deletion</strong> - All data removed upon account deletion</li>
+                <li><strong>Backup Cleanup</strong> - Deleted data removed from backups</li>
+                <li><strong>Log Retention</strong> - Security logs kept for limited time</li>
+            </ul>
+
+            <h2>Compliance and Standards</h2>
+
+            <h3>Security Standards</h3>
+            <p>Our implementation follows industry security standards:</p>
+            <ul>
+                <li><strong>OWASP Guidelines</strong> - Web application security best practices</li>
+                <li><strong>NIST Framework</strong> - Cybersecurity framework compliance</li>
+                <li><strong>ISO 27001 Principles</strong> - Information security management</li>
+                <li><strong>GDPR Principles</strong> - Privacy by design concepts</li>
+            </ul>
+
+            <h3>Data Processing Lawfulness</h3>
+            <p>Data processing is based on:</p>
+            <ul>
+                <li><strong>Consent</strong> - You provide explicit consent for data processing</li>
+                <li><strong>Contract</strong> - Processing necessary to provide the service</li>
+                <li><strong>Legitimate Interest</strong> - Security and fraud prevention</li>
+                <li><strong>Transparency</strong> - Clear information about data use</li>
+            </ul>
+
+            <h2>Incident Response</h2>
+
+            <h3>Data Breach Procedures</h3>
+            <p>In the unlikely event of a data breach:</p>
+            <ol>
+                <li><strong>Immediate Containment</strong> - Stop the breach and secure systems</li>
+                <li><strong>Impact Assessment</strong> - Determine what data was affected</li>
+                <li><strong>User Notification</strong> - Inform affected users promptly</li>
+                <li><strong>Remediation</strong> - Fix vulnerabilities and improve security</li>
+                <li><strong>Monitoring</strong> - Enhanced monitoring post-incident</li>
+            </ol>
+
+            <h3>User Actions During Incidents</h3>
+            <p>If you suspect a security issue:</p>
+            <ul>
+                <li><strong>Change Password</strong> - Update your password immediately</li>
+                <li><strong>Review Activity</strong> - Check your recent data changes</li>
+                <li><strong>Report Issues</strong> - Contact support about suspicious activity</li>
+                <li><strong>Monitor Accounts</strong> - Watch for unusual activity</li>
+            </ul>
+
+            <h2>Technical Safeguards</h2>
+
+            <h3>Application Security</h3>
+            <p>Multiple technical measures protect your data:</p>
+            <ul>
+                <li><strong>Input Sanitization</strong> - Clean all user input</li>
+                <li><strong>Output Encoding</strong> - Prevent XSS attacks</li>
+                <li><strong>Error Handling</strong> - No sensitive data in error messages</li>
+                <li><strong>Logging Controls</strong> - No sensitive data in logs</li>
+                <li><strong>Session Security</strong> - Secure token management</li>
+            </ul>
+
+            <h3>Infrastructure Security</h3>
+            <p>Server and infrastructure protection includes:</p>
+            <ul>
+                <li><strong>Access Controls</strong> - Limited server access</li>
+                <li><strong>Firewall Protection</strong> - Network security controls</li>
+                <li><strong>Regular Updates</strong> - Security patches and updates</li>
+                <li><strong>Monitoring</strong> - Continuous security monitoring</li>
+                <li><strong>Backup Security</strong> - Secure backup storage</li>
+            </ul>
+
+            <div class="alert alert-info">
+                <h4><i class="bi bi-info-circle"></i> Your Rights</h4>
+                <p>You have the right to:</p>
+                <ul class="mb-0">
+                    <li>Access your personal data</li>
+                    <li>Correct inaccurate data</li>
+                    <li>Delete your data</li>
+                    <li>Export your data</li>
+                    <li>Restrict data processing</li>
+                    <li>Object to data processing</li>
+                </ul>
+            </div>
+
+            <p class="mt-4">
+                <strong>Next:</strong> Learn about <a href="/docs/security/best-practices.html">security best practices</a> for users, or return to the <a href="/docs/security/index.html">Security Overview</a>.
+            </p>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/components/navbar.js"></script>
+</body>
+</html>

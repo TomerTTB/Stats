@@ -1,0 +1,129 @@
+.docs-container {
+    display: flex;
+    min-height: calc(100vh - 60px); /* Adjust based on navbar height */
+}
+
+.docs-sidebar {
+    width: 280px;
+    background-color: #f8f9fa;
+    border-right: 1px solid #dee2e6;
+    padding: 20px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+}
+
+.docs-content {
+    flex-grow: 1;
+    padding: 30px;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.docs-nav {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.docs-nav-section {
+    margin-bottom: 20px;
+}
+
+.docs-nav-title {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 10px;
+    font-size: 1.1em;
+}
+
+.docs-nav-items {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 0 10px;
+}
+
+.docs-nav-item {
+    margin: 5px 0;
+}
+
+.docs-nav-link {
+    color: #6c757d;
+    text-decoration: none;
+    display: block;
+    padding: 5px 10px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.docs-nav-link:hover {
+    color: #0d6efd;
+    background-color: #e9ecef;
+}
+
+.docs-nav-link.active {
+    color: #0d6efd;
+    background-color: #e7f1ff;
+    font-weight: 500;
+}
+
+.docs-content h1 {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.docs-content h2 {
+    margin: 2rem 0 1rem;
+}
+
+.docs-content h3 {
+    margin: 1.5rem 0 1rem;
+}
+
+.docs-content p {
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+.docs-content code {
+    background-color: #f8f9fa;
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: #d63384;
+}
+
+.docs-content pre {
+    background-color: #f8f9fa;
+    padding: 1rem;
+    border-radius: 6px;
+    overflow-x: auto;
+}
+
+.docs-content ul, .docs-content ol {
+    margin-bottom: 1rem;
+    padding-left: 1.5rem;
+}
+
+.docs-content li {
+    margin-bottom: 0.5rem;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .docs-container {
+        flex-direction: column;
+    }
+
+    .docs-sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #dee2e6;
+    }
+
+    .docs-content {
+        padding: 20px;
+    }
+} 
