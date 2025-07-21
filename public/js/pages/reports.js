@@ -98,7 +98,7 @@ class NutritionReports {
             let status = 'needs-improvement';
             if (calorieAchievement >= 95 && calorieAchievement <= 105) {
                 status = 'excellent';
-            } else if (calorieAchievement >= 85 && calorieAchievement <= 115) {
+            } else if (calorieAchievement >= 90 && calorieAchievement <= 110) {
                 status = 'good';
             }
 

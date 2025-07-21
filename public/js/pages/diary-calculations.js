@@ -215,14 +215,13 @@ function updateHeaderStats() {
     if (mealGoal) {
         mealGoal.textContent = totals.calories.toFixed(1);
         
-        // Color coding based on goal achievement
-        const goalDifference = Math.abs(totals.calories - goalCalories);
-        const goalPercentageDiff = goalCalories > 0 ? (goalDifference / goalCalories) * 100 : 0;
+        // Color coding based on goal achievement (matching reports.js logic)
+        const calorieAchievement = goalCalories > 0 ? (totals.calories / goalCalories) * 100 : 0;
         
-        if (goalPercentageDiff <= GOAL_GREEN_THRESHOLD) {
+        if (calorieAchievement >= 95 && calorieAchievement <= 105) {
             mealGoal.style.backgroundColor = '#d4edda'; // Green
             mealGoal.style.border = '1px solid #c3e6cb';
-        } else if (goalPercentageDiff <= GOAL_YELLOW_THRESHOLD) {
+        } else if (calorieAchievement >= 90 && calorieAchievement <= 110) {
             mealGoal.style.backgroundColor = '#fff3cd'; // Yellow
             mealGoal.style.border = '1px solid #ffeaa7';
         } else {

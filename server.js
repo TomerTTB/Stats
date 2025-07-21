@@ -8,7 +8,7 @@ const { initializeDatabase, testConnection } = require('./src/database/init');
 
 // Initialize express app
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 8080;
 
 // Middleware for parsing JSON and logging
 app.use(express.json());
@@ -87,8 +87,8 @@ async function startServer() {
         // Initialize database (non-blocking - server starts even if DB fails)
         initializeDatabaseAsync();
 
-        // Start the server
-        app.listen(port, () => {
+        // Start the server - bind to all interfaces for cloud deployment
+        app.listen(port, '0.0.0.0', () => {
             console.log('=================================');
             console.log(`Server is running on port ${port}`);
             console.log('Available routes:');
