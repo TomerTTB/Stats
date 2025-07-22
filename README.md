@@ -1,4 +1,4 @@
-# Stats - Personal Nutrition Tracker
+# Stats - Personal Nutrition Tracker.
 
 A comprehensive web-based nutrition tracking application that helps you monitor daily food intake, track weight changes, analyze nutritional data, and manage meal planning with SQLite database backend.
 
