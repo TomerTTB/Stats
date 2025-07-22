@@ -1,1 +1,38 @@
+name: Deploy to Google Cloud VM
 
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+        
+    - name: Configure SSH
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.VM_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan -H ${{ secrets.VM_EXTERNAL_IP }} >> ~/.ssh/known_hosts
+        
+    - name: Deploy to VM
+      run: |
+        # Upload code to VM
+        rsync -avz -e "ssh -i ~/.ssh/id_rsa" \
+          --exclude='.git' \
+          --exclude='node_modules' \
+          --exclude='.env' \
+          ./ ${{ secrets.VM_USERNAME }}@${{ secrets.VM_EXTERNAL_IP }}:~/app/
+          
+    - name: Restart app with PM2
+      run: |
+        ssh -i ~/.ssh/id_rsa ${{ secrets.VM_USERNAME }}@${{ secrets.VM_EXTERNAL_IP }} << 'EOF'
+          cd ~/app
+          npm ci --production
+          pm2 restart nutrition-app || pm2 start npm --name "nutrition-app" -- start
+        EOF
