@@ -25,7 +25,17 @@ app.use(session({
 }));
 
 app.use((req, res, next) => {
-    console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+    // Skip logging common bot/scanner requests
+    const botPatterns = [
+        '/download/', '/get.php', '/wp-admin', '/phpmyadmin', 
+        '/admin', '/robots.txt', '/favicon.ico'
+    ];
+    
+    const isBotRequest = botPatterns.some(pattern => req.url.includes(pattern));
+    
+    if (!isBotRequest) {
+        console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+    }
     next();
 });
 
