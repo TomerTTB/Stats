@@ -1,4 +1,4 @@
-# Stats - Personal Nutrition Tracker
+# Stats - Personal Nutrition Tracker.
 
 A comprehensive web-based nutrition tracking application that helps you monitor daily food intake, calculate macronutrients, and manage meal planning.
 
