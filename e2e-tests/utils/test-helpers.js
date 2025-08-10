@@ -229,16 +229,12 @@ async function loadTestData(filename) {
  * @param {Page} page - Playwright page object
  * @param {string} name - Screenshot name
  * @param {string} context - Test context
- * @param {TestInfo} testInfo - Playwright test info (optional, for attaching to report)
  */
-async function takeContextualScreenshot(page, name, context = '', testInfo = null) {
+async function takeContextualScreenshot(page, name, context = '') {
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
   const contextSuffix = context ? `-${context}` : '';
   const filename = `${name}${contextSuffix}-${timestamp}.png`;
-  
-  // Organize screenshots in test-artifacts/screenshots folder
-  const screenshotsDir = path.join(__dirname, '..', 'test-artifacts', 'screenshots');
-  const filePath = path.join(screenshotsDir, filename);
+  const filePath = path.join('e2e-tests', 'screenshots', filename);
   
   try {
     // Check if page is still open
@@ -247,27 +243,10 @@ async function takeContextualScreenshot(page, name, context = '', testInfo = nul
       return filename;
     }
     
-    // Ensure screenshots directory exists
-    await fs.mkdir(screenshotsDir, { recursive: true });
-    
-    // Take screenshot and save to our organized location
-    const screenshotBuffer = await page.screenshot({ 
+    await page.screenshot({ 
       path: filePath, 
       fullPage: true 
     });
-    
-    // Also attach screenshot to test results for HTML report if testInfo is provided
-    if (testInfo) {
-      try {
-        await testInfo.attach(`${name}${contextSuffix}`, {
-          body: screenshotBuffer,
-          contentType: 'image/png'
-        });
-      } catch (attachError) {
-        console.log(`Screenshot saved to file but could not attach to report: ${attachError.message}`);
-      }
-    }
-    
     console.log(`Screenshot saved: ${filePath}`);
     return filename;
   } catch (error) {

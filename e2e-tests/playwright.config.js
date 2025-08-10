@@ -19,13 +19,10 @@ module.exports = defineConfig({
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: [
-    ['html', { outputFolder: 'test-artifacts/reports/html-report' }],
-    ['json', { outputFile: 'test-artifacts/reports/test-results.json' }],
-    ['junit', { outputFile: 'test-artifacts/reports/junit.xml' }]
+    ['html', { outputFolder: 'reports/html-report' }],
+    ['json', { outputFile: 'reports/test-results.json' }],
+    ['junit', { outputFile: 'reports/junit.xml' }]
   ],
-  /* Output directory for test artifacts - videos, traces, etc. */
-  outputDir: 'test-artifacts/videos',
-
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
@@ -34,8 +31,8 @@ module.exports = defineConfig({
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
     
-    /* Take screenshot on all tests to include in reports */
-    screenshot: 'on',
+    /* Take screenshot only on failures */
+    screenshot: 'only-on-failure',
     
     /* Record video only on failures */
     // video: 'retain-on-failure',

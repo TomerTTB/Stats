@@ -256,27 +256,6 @@ const API = {
         delete: (id) => authenticatedFetch(`/api/weight/${id}`, {
             method: 'DELETE'
         })
-    },
-
-    // Measurements tracking API
-    measurements: {
-        getAll: () => authenticatedFetch('/api/measurements'),
-        getByType: (type) => authenticatedFetch(`/api/measurements/type/${encodeURIComponent(type)}`),
-        getTypes: () => authenticatedFetch('/api/measurements/types'),
-        getStats: (type) => authenticatedFetch(`/api/measurements/stats/${encodeURIComponent(type)}`),
-        add: (entry) => authenticatedFetch('/api/measurements', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(entry)
-        }),
-        update: (id, entry) => authenticatedFetch(`/api/measurements/${id}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(entry)
-        }),
-        delete: (id) => authenticatedFetch(`/api/measurements/${id}`, {
-            method: 'DELETE'
-        })
     }
 };
 

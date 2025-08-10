@@ -157,9 +157,7 @@
     - Create meal state validation utilities
     - _Requirements: 2.2, 4.2_
 
-- [x] 6. Write authentication test suite
-
-
+- [ ] 6. Write authentication test suite
   - [x] 6.1 Create login functionality tests
 
 
@@ -198,19 +196,8 @@
     - Create tests for post-logout navigation restrictions
     - _Requirements: 4.1, 3.1, 3.2_
 
-- [x] 7. Write diary/meal tracking test suite
-
-
-
-
-
-
-  - [x] 7.1 Create meal tracking functionality tests
-
-
-
-
-
+- [ ] 7. Write diary/meal tracking test suite
+  - [ ] 7.1 Create meal tracking functionality tests
     - Write tests for adding foods to meals
     - Implement tests for meal calculation accuracy
     - Create tests for meal data persistence
@@ -230,9 +217,7 @@
     - Add tests for food search modal interactions
     - _Requirements: 4.2, 4.3_
 
-  - [x] 7.3 Create daily navigation tests
-
-
+  - [ ] 7.3 Create daily navigation tests
 
 
 
@@ -243,29 +228,15 @@
     - Add tests for navigation state management
     - _Requirements: 4.2, 4.3_
 
-- [x] 8. Write food database management test suite
-
-
-  - [x] 8.1 Create food CRUD operation tests
-
-
-
-
-
+- [ ] 8. Write food database management test suite
+  - [ ] 8.1 Create food CRUD operation tests
     - Write tests for adding new food items
     - Implement tests for editing existing foods
     - Create tests for deleting food items
     - Add tests for food data validation
     - _Requirements: 4.2, 4.3, 3.1_
 
-  - [x] 8.2 Create food search and filter tests
-
-
-
-
-
-
-
+  - [ ] 8.2 Create food search and filter tests
     - Write tests for food database search functionality
     - Implement tests for food filtering and sorting
     - Create tests for search result accuracy
@@ -287,31 +258,16 @@
     - Add tests for chart export functionality
     - _Requirements: 4.2, 4.3_
 
-- [x] 10. Write settings management test suite
-
-
-
-
-  - [x] 10.1 Create user settings tests
-
-
-
-
-
+- [ ] 10. Write settings management test suite
+  - [ ] 10.1 Create user settings tests
     - Write tests for settings form interactions
     - Implement tests for settings persistence
     - Create tests for settings validation
     - Add tests for default settings behavior
     - _Requirements: 4.2, 4.3, 3.1_
 
-- [x] 11. Write weight tracking test suite
-
-
-
-
-  - [x] 11.1 Create weight entry tests
-
-
+- [ ] 11. Write weight tracking test suite
+  - [ ] 11.1 Create weight entry tests
     - Write tests for weight entry creation and editing
     - Implement tests for weight data validation
     - Create tests for weight history management
@@ -348,16 +304,6 @@
     - [x] Add global setup/teardown for database protection
     - [x] Create manual cleanup scripts for development
     - _Requirements: 3.3, 6.4_
-
-  - [x] 13.3 Implement test artifact management and cleanup
-
-
-    - [x] Create unified artifact organization structure (screenshots, videos, traces, reports)
-    - [x] Implement configurable artifact cleanup before test runs
-    - [x] Add artifact management scripts with statistics and cleanup options
-    - [x] Configure automatic cleanup in global test setup with multiple modes
-    - [x] Create comprehensive documentation and configuration examples
-    - _Requirements: 5.3, 7.1, 7.4_
 
 - [ ] 14. Write end-to-end user journey tests
   - [ ] 14.1 Create complete user workflow tests

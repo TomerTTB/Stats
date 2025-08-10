@@ -297,13 +297,13 @@ class DiaryPage extends BasePage {
     await this.selectFoodFromResults(mealId, rowIndex, 0);
     
     // Wait for food data to be populated
-    await this.page.waitForTimeout(500);
+    await this.page.waitForTimeout(1000);
     
     // Always set the amount to ensure it matches what we expect
     await this.setFoodAmount(mealId, rowIndex, amount);
     
     // Wait for calculations to complete
-    await this.page.waitForTimeout(300);
+    await this.page.waitForTimeout(500);
   }
 
   /**
@@ -322,10 +322,7 @@ class DiaryPage extends BasePage {
     await amountInput.press('Tab'); // Trigger calculation
     await amountInput.dispatchEvent('change'); // Ensure change event fires
     
-    // Click outside the cell to ensure save is triggered
-    await this.page.click('body');
-    
-    // Wait for calculations and save to complete
+    // Wait for calculations to complete
     await this.page.waitForTimeout(500);
   }
 
@@ -632,8 +629,8 @@ class DiaryPage extends BasePage {
     
     // Verify each meal has a table
     for (let mealId = 1; mealId <= 6; mealId++) {
-      const mealTableSelector = `${this.selectors.mealSections}[data-meal-id="${mealId}"] ${this.selectors.mealTables}`;
-      await this.assertElementVisible(mealTableSelector);
+      const mealTable = this.getMealTable(mealId);
+      await this.assertElementVisible(mealTable);
     }
   }
 }

@@ -2,17 +2,14 @@
 node_modules/
 package-lock.json
 
-# Test results (old structure - keep for backward compatibility)
+# Test results
 test-results/
 playwright-report/
 reports/
 
-# Screenshots and videos (old structure)
+# Screenshots and videos
 screenshots/
 videos/
-
-# Test artifacts (new organized structure)
-test-artifacts/
 
 # Database files (keep original, ignore test changes)
 data/nutrition_app.db

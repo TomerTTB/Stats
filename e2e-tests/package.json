@@ -9,33 +9,17 @@
     "test:debug": "playwright test --debug",
     "test:ui": "playwright test --ui",
     "test:safe": "npm run test && npm run db:cleanup",
-    "test:report": "playwright show-report test-artifacts/reports/html-report",
+    "test:report": "playwright show-report",
     "test:smoke": "node run-smoke-tests.js",
     "install:browsers": "playwright install",
     "db:cleanup": "node scripts/cleanup-test-data.js",
-    "verify": "node scripts/verify-setup.js",
-    "artifacts:init": "node scripts/manage-artifacts.js init",
-    "artifacts:migrate": "node scripts/manage-artifacts.js migrate",
-    "artifacts:clean": "node scripts/manage-artifacts.js clean",
-    "artifacts:clean:all": "node scripts/manage-artifacts.js clean --all",
-    "artifacts:clean:old": "node scripts/manage-artifacts.js clean --all --older-than=7",
-    "artifacts:stats": "node scripts/manage-artifacts.js stats",
-    "test:clean": "cross-env CLEANUP_ARTIFACTS=true npm run test",
-    "test:no-clean": "cross-env CLEANUP_ARTIFACTS=false npm run test",
-    "test:clean-old": "cross-env CLEANUP_MODE=old npm run test",
-    "test:clean-selective": "cross-env CLEANUP_MODE=selective npm run test"
+    "verify": "node scripts/verify-setup.js"
   },
-  "keywords": [
-    "playwright",
-    "e2e",
-    "testing",
-    "nutristats"
-  ],
+  "keywords": ["playwright", "e2e", "testing", "nutristats"],
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "@playwright/test": "^1.40.0",
-    "cross-env": "^10.0.0",
     "sqlite3": "^5.1.6"
   }
 }

@@ -343,8 +343,6 @@ class WeightTracker {
         this.settings = null;
         this.chart = null;
         this.initialized = false;
-        this.isMetricSystem = true; // Default to metric
-        this.weightUnit = 'kg'; // Default unit
     }
 
     async init() {
@@ -356,7 +354,6 @@ class WeightTracker {
         try {
             console.log('Initializing WeightTracker...');
             await this.loadSettings();
-            this.updateUnitSystem();
             await this.loadWeightData();
             this.setupEventListeners();
             this.updateWeightStatistics();
@@ -374,25 +371,8 @@ class WeightTracker {
         try {
             const response = await API.settings.get();
             this.settings = await response.json();
-            this.isMetricSystem = this.settings.unitSystem === 'metric';
-            console.log('Weight: Unit system loaded -', this.isMetricSystem ? 'Metric' : 'Imperial');
         } catch (error) {
             console.error('Error loading settings:', error);
-            this.isMetricSystem = true; // Default to metric
-        }
-    }
-
-    updateUnitSystem() {
-        const unitDisplay = document.getElementById('weightUnitDisplay');
-        if (unitDisplay) {
-            if (this.isMetricSystem) {
-                unitDisplay.textContent = 'kg';
-                this.weightUnit = 'kg';
-            } else {
-                unitDisplay.textContent = 'lb';
-                this.weightUnit = 'lb';
-            }
-            console.log('Weight unit system updated:', this.weightUnit);
         }
     }
 
@@ -465,10 +445,10 @@ class WeightTracker {
         const avgWeightChange = this.calculateAvgWeightChange();
         const trend = this.calculateTrend();
 
-        document.getElementById('currentWeight').textContent = currentWeight ? `${currentWeight.toFixed(1)} ${this.weightUnit}` : 'No data';
-        document.getElementById('latestWeightChange').textContent = latestWeightChange !== null ? `${latestWeightChange > 0 ? '+' : ''}${latestWeightChange.toFixed(1)} ${this.weightUnit}` : 'No data';
-        document.getElementById('weightChange').textContent = weightChange ? `${weightChange > 0 ? '+' : ''}${weightChange.toFixed(1)} ${this.weightUnit}` : 'No change';
-        document.getElementById('avgWeightChange').textContent = avgWeightChange ? `${avgWeightChange > 0 ? '+' : ''}${avgWeightChange.toFixed(1)} ${this.weightUnit}/week` : 'No data';
+        document.getElementById('currentWeight').textContent = currentWeight ? `${currentWeight.toFixed(1)} kg` : 'No data';
+        document.getElementById('latestWeightChange').textContent = latestWeightChange !== null ? `${latestWeightChange > 0 ? '+' : ''}${latestWeightChange.toFixed(1)} kg` : 'No data';
+        document.getElementById('weightChange').textContent = weightChange ? `${weightChange > 0 ? '+' : ''}${weightChange.toFixed(1)} kg` : 'No change';
+        document.getElementById('avgWeightChange').textContent = avgWeightChange ? `${avgWeightChange > 0 ? '+' : ''}${avgWeightChange.toFixed(1)} kg/week` : 'No data';
         document.getElementById('weightTrend').textContent = trend;
     }
 
@@ -540,7 +520,7 @@ class WeightTracker {
             data: {
                 labels: labels,
                 datasets: [{
-                    label: `Weight (${this.weightUnit})`,
+                    label: 'Weight',
                     data: weights,
                     borderColor: 'rgba(26, 115, 232, 1)',
                     backgroundColor: 'rgba(26, 115, 232, 0.1)',
@@ -562,7 +542,7 @@ class WeightTracker {
                 scales: {
                     y: {
                         beginAtZero: false,
-                        title: { display: true, text: `Weight (${this.weightUnit})` }
+                        title: { display: true, text: 'Weight (kg)' }
                     },
                     x: {
                         title: { display: true, text: 'Date' },
@@ -578,15 +558,6 @@ class WeightTracker {
 
         // Add resize listener for proper chart resizing
         this.setupWeightChartResizeListener();
-    }
-
-    async refreshSettings() {
-        await this.loadSettings();
-        this.updateUnitSystem();
-        this.updateWeightStatistics();
-        this.createWeightChart();
-        this.updateWeightTable();
-        console.log('Weight: Settings refreshed');
     }
 
     setupWeightChartResizeListener() {
@@ -633,7 +604,7 @@ class WeightTracker {
                 entry.weight - this.weightData[index + 1].weight : 0;
 
             const changeText = change !== 0 ?
-                `${change > 0 ? '+' : ''}${change.toFixed(1)} ${this.weightUnit}` : '-';
+                `${change > 0 ? '+' : ''}${change.toFixed(1)} kg` : '-';
 
             const changeClass = change > 0 ? 'text-danger' : change < 0 ? 'text-success' : '';
 
@@ -643,10 +614,10 @@ class WeightTracker {
                     <input type="date" class="form-control weight-edit d-none" value="${entry.date}">
                 </td>
                 <td>
-                    <span class="weight-value">${entry.weight.toFixed(1)} ${this.weightUnit}</span>
+                    <span class="weight-value">${entry.weight.toFixed(1)} kg</span>
                     <div class="input-group weight-edit d-none">
                         <input type="number" class="form-control weight-edit" value="${entry.weight}" step="0.1" min="0">
-                        <span class="input-group-text">${this.weightUnit}</span>
+                        <span class="input-group-text">kg</span>
                     </div>
                 </td>
                 <td class="${changeClass}">${changeText}</td>
@@ -892,9 +863,8 @@ class ReportsApp {
     setupTabSwitching() {
         const nutritionTab = document.getElementById('nutrition-tab');
         const weightTab = document.getElementById('weight-tab');
-        const measurementsTab = document.getElementById('measurements-tab');
 
-        if (!nutritionTab || !weightTab || !measurementsTab) {
+        if (!nutritionTab || !weightTab) {
             console.error('Tab buttons not found');
             return;
         }
@@ -913,13 +883,6 @@ class ReportsApp {
             e.preventDefault();
             console.log('Weight tab clicked');
             this.switchToTab('weight');
-        });
-
-        // Handle measurements tab click
-        measurementsTab.addEventListener('click', (e) => {
-            e.preventDefault();
-            console.log('Measurements tab clicked');
-            this.switchToTab('measurements');
         });
     }
 
@@ -942,22 +905,18 @@ class ReportsApp {
         // Get tab buttons
         const nutritionTab = document.getElementById('nutrition-tab');
         const weightTab = document.getElementById('weight-tab');
-        const measurementsTab = document.getElementById('measurements-tab');
 
         // Get report sections
         const nutritionSection = document.getElementById('nutrition-section');
         const weightSection = document.getElementById('weight-section');
-        const measurementsSection = document.getElementById('measurements-section');
 
         // Validate elements exist
-        if (!nutritionTab || !weightTab || !measurementsTab || !nutritionSection || !weightSection || !measurementsSection) {
+        if (!nutritionTab || !weightTab || !nutritionSection || !weightSection) {
             console.error('Required elements not found:', {
                 nutritionTab: !!nutritionTab,
                 weightTab: !!weightTab,
-                measurementsTab: !!measurementsTab,
                 nutritionSection: !!nutritionSection,
-                weightSection: !!weightSection,
-                measurementsSection: !!measurementsSection
+                weightSection: !!weightSection
             });
             return;
         }
@@ -968,12 +927,10 @@ class ReportsApp {
         // STEP 1: Deactivate all tab buttons
         nutritionTab.classList.remove('active');
         weightTab.classList.remove('active');
-        measurementsTab.classList.remove('active');
 
         // STEP 2: Hide all sections
         nutritionSection.classList.remove('active');
         weightSection.classList.remove('active');
-        measurementsSection.classList.remove('active');
 
         // STEP 3: Activate the selected tab and section
         if (tabName === 'nutrition') {
@@ -988,21 +945,6 @@ class ReportsApp {
 
             // Initialize weight tracker if not already done
             this.weightTracker.init();
-
-        } else if (tabName === 'measurements') {
-            measurementsTab.classList.add('active');
-            measurementsSection.classList.add('active');
-            console.log('Measurements section activated');
-
-            // Initialize measurements manager if not already done
-            if (typeof measurementsManager !== 'undefined' && !measurementsManager.initialized) {
-                measurementsManager.init();
-            } else if (typeof measurementsManager !== 'undefined') {
-                // Ensure default date is set when tab becomes active
-                measurementsManager.setDefaultDate();
-                // Re-setup event listeners to ensure they're attached
-                measurementsManager.setupEventListeners();
-            }
         }
 
         console.log(`Successfully switched to ${tabName} tab`);
@@ -1028,22 +970,13 @@ class ReportsApp {
                     console.log('Weight chart resized');
                 }
 
-                // Resize measurements chart if it exists and is visible
-                if (typeof measurementsManager !== 'undefined' && measurementsManager.measurementChart && this.currentTab === 'measurements') {
-                    measurementsManager.measurementChart.resize();
-                    console.log('Measurements chart resized');
-                }
-
-                // Force resize all charts regardless of current tab (for better reliability)
+                // Force resize both charts regardless of current tab (for better reliability)
                 setTimeout(() => {
                     if (this.nutritionReports.charts.weeklyCalories) {
                         this.nutritionReports.charts.weeklyCalories.resize();
                     }
                     if (this.weightTracker.chart) {
                         this.weightTracker.chart.resize();
-                    }
-                    if (typeof measurementsManager !== 'undefined' && measurementsManager.measurementChart) {
-                        measurementsManager.measurementChart.resize();
                     }
                 }, 100);
 
@@ -1062,11 +995,6 @@ document.addEventListener('DOMContentLoaded', () => {
     } else {
         console.log('ReportsApp already exists, skipping initialization');
     }
-    
-    // Initialize measurements manager
-    if (typeof measurementsManager !== 'undefined') {
-        measurementsManager.init();
-    }
 });
 
 // Also initialize on window load as backup for slow connections
@@ -1077,10 +1005,5 @@ window.addEventListener('load', () => {
         window.reportsApp = new ReportsApp();
     } else {
         console.log('ReportsApp already exists on window load, skipping');
-    }
-    
-    // Initialize measurements manager if not already done
-    if (typeof measurementsManager !== 'undefined' && !measurementsManager.initialized) {
-        measurementsManager.init();
     }
 }); 

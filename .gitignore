@@ -100,20 +100,4 @@ Thumbs.db
 
 # Logs
 logs
-*.log
-
-# Migration and Production Files
-# Keep migration scripts in git, but exclude production-specific files
-scripts/migrate-production.bat
-scripts/migrate-remote.bat
-scripts/migrate-local-copy.bat
-scripts/production-config.json
-scripts/.production-db-path
-production-*.db
-*-production.db
-backup-*.db
-
-# Local copies of production databases (if you copy them for testing)
-src/data/production_*.db
-src/data/*_production.db
-src/data/backup_*.db 
+*.log 

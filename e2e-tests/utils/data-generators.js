@@ -139,8 +139,9 @@ function generateTestMeal(overrides = {}) {
 function generateTestWeightEntry(overrides = {}) {
   return {
     date: new Date().toISOString().split('T')[0],
-    weight: generateRandomNumber(50, 120, 1), // kg range
-    note: `Test weight entry ${generateRandomString(6)}`,
+    weight: generateRandomNumber(120, 250, 1),
+    unit: 'lbs',
+    notes: `Test weight entry ${generateRandomString(6)}`,
     ...overrides
   };
 }
